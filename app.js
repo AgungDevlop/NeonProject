@@ -21,14 +21,17 @@ let commandLogs = JSON.parse(localStorage.getItem("commandLogs") || "[]");
 
 // Fungsi untuk memuat skrip iklan secara dinamis
 function loadAdScript() {
-    if (document.querySelector('script[data-zone="9797325"]')) {
+    // Cek dulu untuk mencegah skrip dimuat berulang kali
+    if (document.querySelector('script[data-zone="9797539"]')) {
         return;
     }
     try {
         console.log("Attempting to load ad script...");
         const s = document.createElement('script');
-        s.dataset.zone = 9797325;
-        s.src = 'https://wugroansaghadry.com/vignette.min.js';
+        // --- PERUBAHAN DI SINI ---
+        s.dataset.zone = 9797539;
+        s.src = 'https://ptichoolsougn.net/vignette.min.js';
+        // --- AKHIR PERUBAHAN ---
         const target = [document.documentElement, document.body].filter(Boolean).pop();
         target.appendChild(s);
     } catch (e) {
@@ -99,7 +102,6 @@ document.addEventListener('alpine:init', () => {
                 await executeShellCommand(COMMANDS.disable_dns, 'SilentOp', `dns-disable-${generateRandomId()}`);
                 this.activeModal = '';
                 this.showNotification('Adblock DNS has been disabled successfully.');
-                // BAGIAN INI MEMASTIKAN IKLAN MUNCUL SETELAH TOMBOL DI-KLIK
                 loadAdScript();
             } catch (e) {
                 console.error("Failed to disable DNS:", e);
