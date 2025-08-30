@@ -65,13 +65,18 @@ function runCommandFlow(command, moduleName, metadata = {}) {
     getAlpine().modalMessage = "Loading Ad...";
     getAlpine().activeModal = 'processing';
     setTimeout(() => {
-        if (!sessionStorage.getItem('adShownThisSession')) {
-            sessionStorage.setItem('adShownThisSession', 'true');
+        const lastAdTime = localStorage.getItem('lastAdShownTime');
+        const currentTime = new Date().getTime();
+        
+        // Cek jika belum pernah ada atau sudah lebih dari 10 detik (10000 ms)
+        if (!lastAdTime || (currentTime - lastAdTime > 10000)) {
+            localStorage.setItem('lastAdShownTime', currentTime); // Simpan waktu saat ini
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
+
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000);
+    }, 2000); // Waktu tunggu sebelum perintah dieksekusi, bisa diatur terpisah
 }
 
 function runTweakFlow(command, moduleName) {
@@ -79,13 +84,18 @@ function runTweakFlow(command, moduleName) {
     getAlpine().modalMessage = "Loading Ad...";
     getAlpine().activeModal = 'processing';
     setTimeout(() => {
-        if (!sessionStorage.getItem('adShownThisSession')) {
-            sessionStorage.setItem('adShownThisSession', 'true');
+        const lastAdTime = localStorage.getItem('lastAdShownTime');
+        const currentTime = new Date().getTime();
+
+        // Cek jika belum pernah ada atau sudah lebih dari 10 detik (10000 ms)
+        if (!lastAdTime || (currentTime - lastAdTime > 10000)) {
+            localStorage.setItem('lastAdShownTime', currentTime); // Simpan waktu saat ini
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
+
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000);
+    }, 2000); // Waktu tunggu sebelum perintah dieksekusi, bisa diatur terpisah
 }
 
 function fireAndForgetCommand(command, moduleName, logId) {
