@@ -68,15 +68,15 @@ function runCommandFlow(command, moduleName, metadata = {}) {
         const lastAdTime = localStorage.getItem('lastAdShownTime');
         const currentTime = new Date().getTime();
         
-        // Cek jika belum pernah ada atau sudah lebih dari 10 detik (10000 ms)
-        if (!lastAdTime || (currentTime - lastAdTime > 20000)) {
+        // Cek jika belum pernah ada atau sudah lebih dari 15 detik (15000 ms)
+        if (!lastAdTime || (currentTime - lastAdTime > 15000)) {
             localStorage.setItem('lastAdShownTime', currentTime); // Simpan waktu saat ini
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
 
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000); // Waktu tunggu sebelum perintah dieksekusi, bisa diatur terpisah
+    }, 2000); // Waktu tunggu sebelum perintah dieksekusi
 }
 
 function runTweakFlow(command, moduleName) {
@@ -87,15 +87,15 @@ function runTweakFlow(command, moduleName) {
         const lastAdTime = localStorage.getItem('lastAdShownTime');
         const currentTime = new Date().getTime();
 
-        // Cek jika belum pernah ada atau sudah lebih dari 10 detik (10000 ms)
-        if (!lastAdTime || (currentTime - lastAdTime > 10000)) {
+        // Cek jika belum pernah ada atau sudah lebih dari 15 detik (15000 ms)
+        if (!lastAdTime || (currentTime - lastAdTime > 15000)) {
             localStorage.setItem('lastAdShownTime', currentTime); // Simpan waktu saat ini
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
 
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000); // Waktu tunggu sebelum perintah dieksekusi, bisa diatur terpisah
+    }, 2000); // Waktu tunggu sebelum perintah dieksekusi
 }
 
 function fireAndForgetCommand(command, moduleName, logId) {
