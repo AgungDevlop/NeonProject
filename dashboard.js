@@ -5,7 +5,12 @@ async function checkDnsStatus() {
     try {
         const command = `mode=$(settings get global private_dns_mode); spec=$(settings get global private_dns_specifier); if [[ "$mode" == "hostname" && ("$spec" == *adguard* || "$spec" == *nextdns*) ]]; then echo "ADBLOCK_DNS_DETECTED"; else echo "OK"; fi`;
         const output = await executeShellCommand(command, 'DnsCheck', `dns-check-${generateRandomId()}`);
-        if (output.trim() === "ADBLOCK_DNS_DETECTED") getAlpine().activeModal = 'dnsWarning';
+        if (output.trim() === "ADBLOCK_DNS_DETECTED") {
+            getAlpine().activeModal = 'dnsWarning';
+        } else {
+            // BARIS BARU: Jika DNS aman, langsung muat skrip iklan
+            loadAdScript();
+        }
     } catch (e) {
         console.error("DNS check failed:", e);
     }

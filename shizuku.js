@@ -69,7 +69,7 @@ function runCommandFlow(command, moduleName, metadata = {}) {
         const currentTime = new Date().getTime();
         
         // Cek jika belum pernah ada atau sudah lebih dari 10 detik (10000 ms)
-        if (!lastAdTime || (currentTime - lastAdTime > 10000)) {
+        if (!lastAdTime || (currentTime - lastAdTime > 20000)) {
             localStorage.setItem('lastAdShownTime', currentTime); // Simpan waktu saat ini
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
