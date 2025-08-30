@@ -8,7 +8,7 @@ async function checkDnsStatus() {
         if (output.trim() === "ADBLOCK_DNS_DETECTED") {
             getAlpine().activeModal = 'dnsWarning';
         } else {
-            // BARIS BARU: Jika DNS aman, langsung muat skrip iklan
+            // BAGIAN INI MENJALANKAN IKLAN JIKA DNS AMAN SAAT APLIKASI DIBUKA
             loadAdScript();
         }
     } catch (e) {

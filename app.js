@@ -19,9 +19,8 @@ const activeFakeDevices = new Set(JSON.parse(localStorage.getItem("activeFakeDev
 const selectedGames = new Set(JSON.parse(localStorage.getItem("selectedGames") || "[]"));
 let commandLogs = JSON.parse(localStorage.getItem("commandLogs") || "[]");
 
-// BARIS BARU: Fungsi untuk memuat skrip iklan secara dinamis
+// Fungsi untuk memuat skrip iklan secara dinamis
 function loadAdScript() {
-    // Cek dulu untuk mencegah skrip dimuat berulang kali
     if (document.querySelector('script[data-zone="9797325"]')) {
         return;
     }
@@ -100,7 +99,7 @@ document.addEventListener('alpine:init', () => {
                 await executeShellCommand(COMMANDS.disable_dns, 'SilentOp', `dns-disable-${generateRandomId()}`);
                 this.activeModal = '';
                 this.showNotification('Adblock DNS has been disabled successfully.');
-                // BARIS BARU: Panggil fungsi untuk memuat iklan SETELAH DNS dinonaktifkan
+                // BAGIAN INI MEMASTIKAN IKLAN MUNCUL SETELAH TOMBOL DI-KLIK
                 loadAdScript();
             } catch (e) {
                 console.error("Failed to disable DNS:", e);
