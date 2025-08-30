@@ -1,0 +1,20 @@
+{
+  "restore_renderer": "setprop debug.hwui.renderer opengl",
+  "restore_thermal": "cmd thermalservice override-status 0",
+  "restore_doze": "dumpsys deviceidle enable",
+  "restore_wifi_power_save": "settings put global wifi_power_save 1",
+  "restore_game_mode": "settings delete global game_mode_on",
+  "restore_power_mode": "cmd power set-fixed-performance-mode-enabled false && cmd power set-adaptive-power-saver-enabled true",
+  "restore_fps_unlocker": "settings delete system peak_refresh_rate && settings delete system min_refresh_rate && settings delete secure user_refresh_rate && settings delete system miui_refresh_rate",
+  "restore_vibration_control": "settings put system haptic_feedback_enabled 1",
+  "restore_background_limiter": "settings delete global background_process_limit",
+  "restore_boot_optimizer": "setprop ro.config.enable.bootsound 1",
+  "restore_animation_speed": "settings put global window_animation_scale 1.0 && settings put global transition_animation_scale 1.0 && settings put global animator_duration_scale 1.0",
+  "restore_wifi_scan": "settings put global wifi_scan_always_enabled 1",
+  "restore_gpu_rendering": "setprop debug.hwui.force_hw_ui false && settings delete global disable_hw_overlays",
+  "restore_gputuner": "settings delete global GPUTUNER_SWITCH",
+  "restore_immersive_mode": "settings delete secure immersive_mode_confirmations",
+  "restore_pointer_speed": "settings put system pointer_speed 0",
+  "restore_angle_for_app": "settings delete global angle_gl_driver_selection_pkgs && settings delete global angle_gl_driver_selection_values",
+  "restore_updatable_driver_for_app": "settings delete global updatable_driver_production_opt_in_apps"
+}

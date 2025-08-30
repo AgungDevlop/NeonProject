@@ -1,0 +1,417 @@
+[
+  {
+    "nama_game": "8 Ball Pool",
+    "nama_paket": "com.miniclip.eightballpool",
+    "developer": "Miniclip.com"
+  },
+  {
+    "nama_game": "AFK Arena",
+    "nama_paket": "com.lilithgame.afk.gp",
+    "developer": "LilithGames"
+  },
+  {
+    "nama_game": "AFK Journey",
+    "nama_paket": "com.farlightgames.igame.gp",
+    "developer": "FARLIGHT"
+  },
+  {
+    "nama_game": "Albion Online",
+    "nama_paket": "com.albiononline",
+    "developer": "Sandbox Interactive GmbH"
+  },
+  {
+    "nama_game": "Among Us",
+    "nama_paket": "com.innersloth.spacemafia",
+    "developer": "Innersloth LLC"
+  },
+  {
+    "nama_game": "Apex Legends Mobile (Discontinued)",
+    "nama_paket": "com.ea.gp.apexlegendsmobilefps",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "Arena Breakout",
+    "nama_paket": "com.proximabeta.mf.uamo",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "Arena Breakout (China)",
+    "nama_paket": "com.tencent.tmgp.mf",
+    "developer": "Tencent Games"
+  },
+  {
+    "nama_game": "Arena of Valor",
+    "nama_paket": "com.garena.game.kgid",
+    "developer": "Garena Mobile Private"
+  },
+  {
+    "nama_game": "Arknights",
+    "nama_paket": "com.YoStarEN.Arknights",
+    "developer": "Yostar Limited."
+  },
+  {
+    "nama_game": "Asphalt 9: Legends",
+    "nama_paket": "com.gameloft.android.ANMP.GloftA9HM",
+    "developer": "Gameloft SE"
+  },
+  {
+    "nama_game": "BATTLEGROUNDS MOBILE INDIA",
+    "nama_paket": "com.pubg.imobile",
+    "developer": "KRAFTON, Inc."
+  },
+  {
+    "nama_game": "Black Desert Mobile",
+    "nama_paket": "com.pearlabyss.blackdesertm.gl",
+    "developer": "PEARL ABYSS"
+  },
+  {
+    "nama_game": "Blood Strike",
+    "nama_paket": "com.netease.newspike",
+    "developer": "NetEase Games"
+  },
+  {
+    "nama_game": "Brawl Stars",
+    "nama_paket": "com.supercell.brawlstars",
+    "developer": "Supercell"
+  },
+  {
+    "nama_game": "Call of Duty: Mobile (Global)",
+    "nama_paket": "com.activision.callofduty.shooter",
+    "developer": "Activision Publishing, Inc."
+  },
+  {
+    "nama_game": "Call of Duty: Mobile - Garena (SEA)",
+    "nama_paket": "com.garena.game.codm",
+    "developer": "Garena Mobile Private"
+  },
+  {
+    "nama_game": "Call of Duty: Mobile (Vietnam)",
+    "nama_paket": "com.vng.codmvn",
+    "developer": "VNG Game Publishing"
+  },
+  {
+    "nama_game": "Call of Duty: Warzone Mobile",
+    "nama_paket": "com.activision.callofduty.warzone",
+    "developer": "Activision Publishing, Inc."
+  },
+  {
+    "nama_game": "Candy Crush Saga",
+    "nama_paket": "com.king.candycrushsaga",
+    "developer": "King"
+  },
+  {
+    "nama_game": "CarX Drift Racing 2",
+    "nama_paket": "com.carxtech.carxdr2",
+    "developer": "CarX Technologies, LLC"
+  },
+  {
+    "nama_game": "CarX Street",
+    "nama_paket": "com.carxtech.sr",
+    "developer": "CarX Technologies, LLC"
+  },
+  {
+    "nama_game": "Clash of Clans",
+    "nama_paket": "com.supercell.clashofclans",
+    "developer": "Supercell"
+  },
+  {
+    "nama_game": "Clash Royale",
+    "nama_paket": "com.supercell.clashroyale",
+    "developer": "Supercell"
+  },
+  {
+    "nama_game": "Delta Force: Hawk Ops",
+    "nama_paket": "com.levelinfinite.deltaforce.global",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "Diablo Immortal",
+    "nama_paket": "com.blizzard.diablo.immortal",
+    "developer": "Blizzard Entertainment, Inc."
+  },
+  {
+    "nama_game": "Dragon Ball Legends",
+    "nama_paket": "com.bandainamcoent.dblegends_ww",
+    "developer": "Bandai Namco Entertainment Inc."
+  },
+  {
+    "nama_game": "Dream League Soccer 2024",
+    "nama_paket": "com.firsttouchgames.dls7",
+    "developer": "First Touch Games Ltd."
+  },
+  {
+    "nama_game": "EA SPORTS FC MOBILE 24",
+    "nama_paket": "com.ea.gp.fifamobile",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "eFootball™ 2024",
+    "nama_paket": "jp.konami.pesam",
+    "developer": "KONAMI"
+  },
+  {
+    "nama_game": "Eggy Party",
+    "nama_paket": "com.netease.partyglobal",
+    "developer": "NetEase Games"
+  },
+  {
+    "nama_game": "Farlight 84",
+    "nama_paket": "com.lilithgames.farlight84",
+    "developer": "FARLIGHT"
+  },
+  {
+    "nama_game": "Fate/Grand Order",
+    "nama_paket": "com.aniplex.fategrandorder.en",
+    "developer": "Aniplex Inc."
+  },
+  {
+    "nama_game": "Free Fire MAX",
+    "nama_paket": "com.dts.freefiremax",
+    "developer": "Garena International I"
+  },
+  {
+    "nama_game": "Game for Peace (PUBG Mobile China)",
+    "nama_paket": "com.tencent.tmgp.pubgmhd",
+    "developer": "Tencent Games"
+  },
+  {
+    "nama_game": "Garena Free Fire",
+    "nama_paket": "com.dts.freefireth",
+    "developer": "Garena International I"
+  },
+  {
+    "nama_game": "Garena Undawn",
+    "nama_paket": "com.garena.game.lmjx",
+    "developer": "Garena International II"
+  },
+  {
+    "nama_game": "Genshin Impact",
+    "nama_paket": "com.miHoYo.GenshinImpact",
+    "developer": "Cognosphere PTE. LTD."
+  },
+  {
+    "nama_game": "Genshin Impact (China)",
+    "nama_paket": "com.miHoYo.ys.android",
+    "developer": "miHoYo"
+  },
+  {
+    "nama_game": "Geometry Dash",
+    "nama_paket": "com.robtopx.geometrydash",
+    "developer": "RobTop Games"
+  },
+  {
+    "nama_game": "GODDESS OF VICTORY: NIKKE",
+    "nama_paket": "com.proximabeta.nikke",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "Hay Day",
+    "nama_paket": "com.supercell.hayday",
+    "developer": "Supercell"
+  },
+  {
+    "nama_game": "Hearthstone",
+    "nama_paket": "com.blizzard.wtcg.hearthstone",
+    "developer": "Blizzard Entertainment, Inc."
+  },
+  {
+    "nama_game": "Homescapes",
+    "nama_paket": "com.playrix.homescapes",
+    "developer": "Playrix"
+  },
+  {
+    "nama_game": "Honkai Impact 3rd",
+    "nama_paket": "com.miHoYo.bh3global",
+    "developer": "Cognosphere PTE. LTD."
+  },
+  {
+    "nama_game": "Honkai: Star Rail",
+    "nama_paket": "com.HoYoverse.hkrpgoversea",
+    "developer": "Cognosphere PTE. LTD."
+  },
+  {
+    "nama_game": "Honor of Kings",
+    "nama_paket": "com.levelinfinite.sgameGlobal",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "League of Legends: Wild Rift",
+    "nama_paket": "com.riotgames.league.wildrift",
+    "developer": "Riot Games, Inc"
+  },
+  {
+    "nama_game": "Lords Mobile: Kingdom Wars",
+    "nama_paket": "com.igg.android.lordsmobile",
+    "developer": "IGG.COM"
+  },
+  {
+    "nama_game": "Marvel Snap",
+    "nama_paket": "com.nvsgames.snap",
+    "developer": "Nuverse"
+  },
+  {
+    "nama_game": "Minecraft",
+    "nama_paket": "com.mojang.minecraftpe",
+    "developer": "Mojang"
+  },
+  {
+    "nama_game": "Mobile Legends: Bang Bang",
+    "nama_paket": "com.mobile.legends",
+    "developer": "Moonton"
+  },
+  {
+    "nama_game": "Mobile Legends: Bang Bang (Vietnam)",
+    "nama_paket": "com.vng.mlbbvn",
+    "developer": "VNG Corporation"
+  },
+  {
+    "nama_game": "MONOPOLY GO!",
+    "nama_paket": "com.scopely.monopolygo",
+    "developer": "Scopely"
+  },
+  {
+    "nama_game": "Mortal Kombat",
+    "nama_paket": "com.wb.goog.mkx",
+    "developer": "Warner Bros. International Enterprises"
+  },
+  {
+    "nama_game": "Need for Speed No Limits",
+    "nama_paket": "com.ea.game.nfs14_row",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "Plants vs. Zombies™ 2",
+    "nama_paket": "com.ea.game.pvz2_row",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "Pokémon GO",
+    "nama_paket": "com.nianticlabs.pokemongo",
+    "developer": "Niantic, Inc."
+  },
+  {
+    "nama_game": "PUBG MOBILE",
+    "nama_paket": "com.tencent.ig",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "PUBG MOBILE (Korea/Japan)",
+    "nama_paket": "com.pubg.krmobile",
+    "developer": "KRAFTON, Inc."
+  },
+  {
+    "nama_game": "PUBG MOBILE (Vietnam)",
+    "nama_paket": "com.vng.pubgmobile",
+    "developer": "VNG Game Publishing"
+  },
+  {
+    "nama_game": "RAID: Shadow Legends",
+    "nama_paket": "com.plarium.raidlegends",
+    "developer": "Plarium Global Ltd"
+  },
+  {
+    "nama_game": "Rainbow Six Mobile",
+    "nama_paket": "com.ubisoft.rainbowsixmobile.r6.fps.pvp.shooter",
+    "developer": "Ubisoft Entertainment"
+  },
+  {
+    "nama_game": "Real Racing 3",
+    "nama_paket": "com.ea.games.r3_row",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "Rise of Kingdoms: Lost Crusade",
+    "nama_paket": "com.lilithgame.roc.gp",
+    "developer": "LilithGames"
+  },
+  {
+    "nama_game": "Roblox",
+    "nama_paket": "com.roblox.client",
+    "developer": "Roblox Corporation"
+  },
+  {
+    "nama_game": "Royal Match",
+    "nama_paket": "com.dreamgames.royalmatch",
+    "developer": "Dream Games, Ltd."
+  },
+  {
+    "nama_game": "Shadow Fight 3",
+    "nama_paket": "com.nekki.shadowfight3",
+    "developer": "NEKKI"
+  },
+  {
+    "nama_game": "Solo Leveling:Arise",
+    "nama_paket": "com.netmarble.sololv",
+    "developer": "Netmarble"
+  },
+  {
+    "nama_game": "Squad Busters",
+    "nama_paket": "com.supercell.squad",
+    "developer": "Supercell"
+  },
+  {
+    "nama_game": "Stardew Valley",
+    "nama_paket": "com.chucklefish.stardewvalley",
+    "developer": "ConcernedApe"
+  },
+  {
+    "nama_game": "Stumble Guys",
+    "nama_paket": "com.stumbleguys.app",
+    "developer": "Scopely"
+  },
+  {
+    "nama_game": "Subway Surfers",
+    "nama_paket": "com.kiloo.subwaysurf",
+    "developer": "SYBO Games"
+  },
+  {
+    "nama_game": "Summoners War",
+    "nama_paket": "com.com2us.smon.normal.freefull.google.kr.android.common",
+    "developer": "Com2uS"
+  },
+  {
+    "nama_game": "Tarisland",
+    "nama_paket": "com.tencent.taris.global",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "Terraria",
+    "nama_paket": "com.and.games505.TerrariaPaid",
+    "developer": "505 Games Srl"
+  },
+  {
+    "nama_game": "The Sims™ Mobile",
+    "nama_paket": "com.ea.gp.simsmobile",
+    "developer": "ELECTRONIC ARTS"
+  },
+  {
+    "nama_game": "Tower of Fantasy",
+    "nama_paket": "com.levelinfinite.hotta.gp",
+    "developer": "Level Infinite"
+  },
+  {
+    "nama_game": "Warframe Mobile",
+    "nama_paket": "com.digitalextremes.warframemobile",
+    "developer": "Digital Extremes"
+  },
+  {
+    "nama_game": "World of Tanks Blitz",
+    "nama_paket": "net.wargaming.wot.blitz",
+    "developer": "Wargaming Group"
+  },
+  {
+    "nama_game": "World of Warships Blitz",
+    "nama_paket": "net.wargaming.wows.blitz",
+    "developer": "Wargaming Group"
+  },
+  {
+    "nama_game": "Wuthering Waves",
+    "nama_paket": "com.kurogame.wutheringwaves.global",
+    "developer": "KURO TECHNOLOGY (HONG KONG) CO., LIMITED"
+  },
+  {
+    "nama_game": "Zenless Zone Zero",
+    "nama_paket": "com.HoYoverse.Nap",
+    "developer": "Cognosphere PTE. LTD."
+  }
+]

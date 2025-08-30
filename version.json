@@ -1,0 +1,12 @@
+{
+  "latestVersion": "1.3",
+  "releaseNotes": [
+    "Added many new gaming performance tweaks (ADB Support).",
+    "Added new Per-App tweaks for graphics drivers.",
+    "Added advanced power management options like 'Disable Doze'.",
+    "Improved Game Scanner reliability with a native code fallback.",
+    "Updated user interface in the Tweaks tab with new components.",
+    "All tweaks now use more comprehensive and effective commands."
+  ],
+  "downloadUrl": "https://neonmagisk.my.id"
+}

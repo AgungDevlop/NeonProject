@@ -1,0 +1,36 @@
+{
+  "diagnose_realtime": "top -n 1 -b",
+  "disable_dns": "settings put global private_dns_mode off",
+
+  "set_dpi": "wm density {value}",
+  "reset_dpi": "wm density reset",
+
+  "renderer_opengl": "echo '[✔] Setting renderer to OpenGL (Default)...' && setprop debug.hwui.renderer opengl",
+  "renderer_skiagl": "echo '[✔] Setting renderer to SkiaGL...' && setprop debug.hwui.renderer skiagl",
+  "renderer_skiavk": "echo '[✔] Setting renderer to SkiaVK (Vulkan)...' && setprop debug.hwui.renderer skiavk",
+
+  "disable_thermal": "echo '[✔] Disabling thermal throttling...' && cmd thermalservice override-status 1",
+  "disable_doze": "echo '[✔] Disabling Doze mode to prevent throttling...' && dumpsys deviceidle disable",
+  "disable_wifi_power_save": "echo '[✔] Disabling Wi-Fi Power Saving...' && settings put global wifi_power_save 0",
+
+  "log_cleaner": "echo '[✔] Clearing system logs...' && logcat -c",
+  "force_deep_sleep": "echo '[✔] Forcing device into deep sleep...' && dumpsys deviceidle force-idle",
+
+  "game_mode_on": "echo '[✔] Activating native Game Mode...' && settings put global game_mode_on 1",
+  "vibration_control_off": "echo '[✔] Disabling all haptic feedback...' && settings put system haptic_feedback_enabled 0",
+  "background_limiter_on": "echo '[✔] Limiting background processes...' && settings put global background_process_limit 4",
+  "boot_optimizer_on": "echo '[✔] Disabling boot animation sound...' && setprop ro.config.enable.bootsound 0",
+  "disable_wifi_scan": "echo '[✔] Disabling background Wi-Fi scanning...' && settings put global wifi_scan_always_enabled 0",
+  "confirm_immersive_mode": "echo '[✔] Auto-confirming immersive mode...' && settings put secure immersive_mode_confirmations confirmed",
+
+  "animation_speed_fast": "echo '[✔] Setting UI animations to 0.5x...' && settings put global window_animation_scale 0.5 && settings put global transition_animation_scale 0.5 && settings put global animator_duration_scale 0.5",
+  "pointer_speed_fast": "echo '[✔] Setting pointer speed to max...' && settings put system pointer_speed 7",
+
+  "power_mode_performance": "echo '[✔] Activating High Performance Power Mode...' && cmd power set-fixed-performance-mode-enabled true && cmd power set-adaptive-power-saver-enabled false",
+  "fps_unlocker_on": "echo '[✔] Forcing max refresh rate across system...' && settings put system peak_refresh_rate 999 && settings put system min_refresh_rate 999 && settings put secure user_refresh_rate 999 && settings put system miui_refresh_rate 999",
+  "force_gpu_rendering": "echo '[✔] Forcing GPU for all 2D rendering...' && setprop debug.hwui.force_hw_ui true && settings put global disable_hw_overlays 1",
+  "enable_gputuner": "echo '[✔] Enabling GPU Tuner switch...' && settings put global GPUTUNER_SWITCH true",
+
+  "force_angle_for_app": "echo '[✔] Forcing ANGLE (Vulkan) for {packageName}...' && settings put global angle_gl_driver_selection_pkgs {packageName} && settings put global angle_gl_driver_selection_values angle",
+  "force_updatable_driver_for_app": "echo '[✔] Forcing Updatable Driver for {packageName}...' && settings put global updatable_driver_production_opt_in_apps {packageName}"
+}
