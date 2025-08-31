@@ -1,5 +1,12 @@
+// This function will contain all the setup steps that depend on Shizuku
+async function initializeAppFeatures() {
+    await checkDnsStatus(); 
+    await initializeDashboard(); 
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // Load non-shizuku dependent data first
         await loadCommands(); 
         loadTweakSettings();
         await Promise.all([
@@ -16,10 +23,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         initializeDiagnosisChart(); 
         applyStoredTweaks();
 
+        // Now, check for Shizuku
         const shizukuOk = await checkShizukuStatus();
         if (shizukuOk) { 
-            await checkDnsStatus(); 
-            await initializeDashboard(); 
+            // If Shizuku is running, proceed with dependent features
+            await initializeAppFeatures();
+        } else {
+            // If Shizuku is NOT running, show the requirement modal
+            getAlpine().activeModal = 'shizukuRequired';
         }
     } catch (error) { 
         console.error("Initialization failed:", error); 
@@ -163,8 +174,30 @@ function setupEventListeners() {
     });
     
     document.getElementById("scan-games-btn")?.addEventListener("click", scanInstalledGames);
-
-    // ===== PENAMBAHAN EVENT LISTENER BARU =====
     document.getElementById("restore-game-settings-btn")?.addEventListener("click", restoreGameSettings);
-    // ==========================================
+
+    // ===== PENAMBAHAN EVENT LISTENER UNTUK MODAL SHIZUKU =====
+    document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => {
+        // Ganti dengan URL tutorial YouTube Anda yang sebenarnya
+        window.open('https://vt.tiktok.com/ZSAqLcegA/', '_blank');
+    });
+
+    document.getElementById('shizuku-recheck-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('shizuku-recheck-btn');
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Checking...`;
+        btn.disabled = true;
+
+        const shizukuOkNow = await checkShizukuStatus();
+
+        if (shizukuOkNow) {
+            getAlpine().activeModal = '';
+            getAlpine().showNotification('Shizuku connected! Initializing app features...');
+            await initializeAppFeatures(); // Jalankan fungsi inisialisasi yang tertunda
+        } else {
+            getAlpine().showNotification('Shizuku is still not running. Please start it and try again.');
+            btn.innerHTML = `<i class="fas fa-sync-alt mr-2"></i>I've Run Shizuku`;
+            btn.disabled = false;
+        }
+    });
+    // ==========================================================
 }

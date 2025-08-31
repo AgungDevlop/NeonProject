@@ -116,12 +116,10 @@
                 <div class="card p-4">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="card-header"><i class="fas fa-gamepad mr-2"></i>Game Optimization</h2>
-                        <!-- ===== PERUBAHAN DIMULAI DI SINI ===== -->
                         <div class="flex gap-2">
                             <button id="scan-games-btn" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt mr-2"></i>Scan</button>
                             <button id="restore-game-settings-btn" class="btn btn-secondary btn-sm"><i class="fas fa-undo mr-2"></i>Restore</button>
                         </div>
-                        <!-- ===== PERUBAHAN BERAKHIR DI SINI ===== -->
                     </div>
 
                     <div id="boost-results-container" class="hidden">
@@ -184,6 +182,21 @@
                 </div>
                 <button @click="activeModal = ''" class="btn btn-secondary w-full mt-6">Close</button>
             </div>
+            
+            <!-- ===== PENAMBAHAN MODAL BARU DI SINI ===== -->
+            <div x-show="activeModal === 'shizukuRequired'" class="text-center">
+                <i class="fas fa-power-off text-4xl text-red-400 mb-3"></i>
+                <h2 class="text-xl font-bold text-red-300 mb-2">Shizuku Not Running</h2>
+                <p class="text-gray-300 mb-4 text-sm">
+                    This app requires Shizuku to be running to function correctly. Please start the Shizuku service and try again.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-3 mt-4">
+                    <a id="shizuku-tutorial-btn" href="#" target="_blank" class="btn btn-secondary flex items-center justify-center gap-2"><i class="fab fa-youtube"></i>Watch Tutorial</a>
+                    <button id="shizuku-recheck-btn" class="btn btn-primary flex items-center justify-center gap-2"><i class="fas fa-sync-alt"></i>I've Run Shizuku</button>
+                </div>
+            </div>
+            <!-- ===== AKHIR PENAMBAHAN MODAL ===== -->
+
         </div>
     </div>
     <div id="notification" class="notification" x-show="notification.show" x-transition><p x-text="notification.message"></p></div>
