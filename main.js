@@ -163,4 +163,8 @@ function setupEventListeners() {
     });
     
     document.getElementById("scan-games-btn")?.addEventListener("click", scanInstalledGames);
+
+    // ===== PENAMBAHAN EVENT LISTENER BARU =====
+    document.getElementById("restore-game-settings-btn")?.addEventListener("click", restoreGameSettings);
+    // ==========================================
 }

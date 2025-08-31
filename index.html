@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="monetag" content="6d9998dbf2d2210cc5fa899e52a19c1c">
     <title>Neon Magisk Module</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -117,7 +116,12 @@
                 <div class="card p-4">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="card-header"><i class="fas fa-gamepad mr-2"></i>Game Optimization</h2>
-                        <button id="scan-games-btn" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt mr-2"></i>Scan for Games</button>
+                        <!-- ===== PERUBAHAN DIMULAI DI SINI ===== -->
+                        <div class="flex gap-2">
+                            <button id="scan-games-btn" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt mr-2"></i>Scan</button>
+                            <button id="restore-game-settings-btn" class="btn btn-secondary btn-sm"><i class="fas fa-undo mr-2"></i>Restore</button>
+                        </div>
+                        <!-- ===== PERUBAHAN BERAKHIR DI SINI ===== -->
                     </div>
 
                     <div id="boost-results-container" class="hidden">
@@ -196,6 +200,5 @@
     <script src="main.js"></script>
 
     <script type="text/javascript"> var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date(); (function(){ var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0]; s1.async=true; s1.src='https://embed.tawk.to/685e4d34227c3f1910a765f4/default'; s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0); })(); </script>
-    
 </body>
 </html>

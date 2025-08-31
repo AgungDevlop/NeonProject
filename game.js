@@ -180,6 +180,41 @@ async function boostGame(packageName, gameName) {
     }
 }
 
+// ===== PENAMBAHAN FUNGSI BARU =====
+async function restoreGameSettings() {
+    if (!(await checkShizukuStatus())) {
+        getAlpine().showNotification("Shizuku is not running.");
+        return;
+    }
+
+    const confirmed = await getAlpine().showConfirm("Are you sure you want to restore all performance settings to default? A reboot is recommended after this action.");
+    if (!confirmed) {
+        getAlpine().showNotification("Restore cancelled.");
+        return;
+    }
+
+    try {
+        const response = await fetch('restore_game.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load restore_game.json: ${response.statusText}`);
+        }
+        const restoreConfig = await response.json();
+        
+        if (restoreConfig && restoreConfig.restoreSystemDefaults) {
+            const commandToRun = restoreConfig.restoreSystemDefaults;
+            // Fungsi runCommandFlow akan menangani tampilan proses, eksekusi, dan output
+            runCommandFlow(commandToRun, "Restoring Default Settings");
+        } else {
+            throw new Error("'restoreSystemDefaults' command not found in restore_game.json");
+        }
+    } catch (error) {
+        console.error("Error during restore process:", error);
+        getAlpine().showNotification(`Restore Error: ${error.message}`);
+        getAlpine().hideProcessing();
+    }
+}
+// =====================================
+
 function parseSystemStats(output) {
     const parts = output.split('---NEON_STATS_SPLIT---');
     const memInfo = parts[0];
