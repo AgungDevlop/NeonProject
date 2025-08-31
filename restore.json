@@ -16,5 +16,7 @@
   "restore_immersive_mode": "settings delete secure immersive_mode_confirmations",
   "restore_pointer_speed": "settings put system pointer_speed 0",
   "restore_angle_for_app": "settings delete global angle_gl_driver_selection_pkgs && settings delete global angle_gl_driver_selection_values",
-  "restore_updatable_driver_for_app": "settings delete global updatable_driver_production_opt_in_apps"
+  "restore_updatable_driver_for_app": "settings delete global updatable_driver_production_opt_in_apps",
+  "restore_dns": "settings delete global private_dns_mode",
+  "restore_dpi": "wm density reset"
 }
