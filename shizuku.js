@@ -69,15 +69,16 @@ function runCommandFlow(command, moduleName, metadata = {}) {
         const currentTime = new Date().getTime();
         const sessionAdShown = sessionStorage.getItem('adShownThisSession');
 
+        // Check if ad was shown in this session or if 1 minute (60000 ms) has passed
         if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) {
-            localStorage.setItem('lastAdShownTime', currentTime);
-            sessionStorage.setItem('adShownThisSession', 'true');
+            localStorage.setItem('lastAdShownTime', currentTime); // Save current time
+            sessionStorage.setItem('adShownThisSession', 'true'); // Mark ad as shown in session
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
 
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000);
+    }, 2000); // Delay before command execution
 }
 
 function runTweakFlow(command, moduleName) {
@@ -89,15 +90,16 @@ function runTweakFlow(command, moduleName) {
         const currentTime = new Date().getTime();
         const sessionAdShown = sessionStorage.getItem('adShownThisSession');
 
+        // Check if ad was shown in this session or if 1 minute (60000 ms) has passed
         if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) {
-            localStorage.setItem('lastAdShownTime', currentTime);
-            sessionStorage.setItem('adShownThisSession', 'true');
+            localStorage.setItem('lastAdShownTime', currentTime); // Save current time
+            sessionStorage.setItem('adShownThisSession', 'true'); // Mark ad as shown in session
             window.open('https://obqj2.com/4/9587058', '_blank');
         }
 
         window.currentCommand = command;
         fireAndForgetCommand(command, moduleName, generateRandomId());
-    }, 2000);
+    }, 2000); // Delay before command execution
 }
 
 function fireAndForgetCommand(command, moduleName, logId) {
