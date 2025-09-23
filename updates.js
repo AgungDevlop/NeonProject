@@ -28,10 +28,18 @@ async function checkForUpdates() {
         if (localVersion === "0.0.0") return;
         const response = await fetch(VERSION_URL, { cache: "no-store" });
         const data = await response.json();
+        
         if (compareVersions(data.latestVersion, localVersion) > 0) {
             document.getElementById('update-version').textContent = data.latestVersion;
-            document.getElementById('update-notes').innerHTML = `<ul>${data.releaseNotes.map(note => `<li>${note}</li>`).join('')}</ul>`;
+            
+            const releaseNotesHTML = `<ul>${data.releaseNotes.map(note => `<li>${note}</li>`).join('')}</ul>`;
+            document.getElementById('update-notes').innerHTML = releaseNotesHTML;
+            
             document.getElementById('update-link').href = data.downloadUrl;
+            
+            // This ensures the static text parts are translated
+            translateUI(); 
+
             getAlpine().activeModal = 'update';
         }
     } catch (e) {
