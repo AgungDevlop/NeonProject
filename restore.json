@@ -5,7 +5,7 @@
   "restore_wifi_power_save": "settings put global wifi_power_save 1",
   "restore_game_mode": "settings delete global game_mode_on",
   "restore_power_mode": "cmd power set-fixed-performance-mode-enabled false && cmd power set-adaptive-power-saver-enabled true",
-  "restore_fps_unlocker": "settings delete system peak_refresh_rate && settings delete system min_refresh_rate && settings delete secure user_refresh_rate && settings delete system miui_refresh_rate",
+  "restore_fps_unlocker": "settings delete system peak_refresh_rate && settings delete system min_refresh_rate",
   "restore_vibration_control": "settings put system haptic_feedback_enabled 1",
   "restore_background_limiter": "settings delete global background_process_limit",
   "restore_boot_optimizer": "setprop ro.config.enable.bootsound 1",
@@ -17,6 +17,16 @@
   "restore_pointer_speed": "settings put system pointer_speed 0",
   "restore_angle_for_app": "settings delete global angle_gl_driver_selection_pkgs && settings delete global angle_gl_driver_selection_values",
   "restore_updatable_driver_for_app": "settings delete global updatable_driver_production_opt_in_apps",
-  "restore_dns": "settings delete global private_dns_mode",
-  "restore_dpi": "wm density reset"
+  "restore_dns": "settings put global private_dns_mode off",
+  "restore_network_profile": "settings put global tcp_congestion_control cubic",
+  "restore_tethering_offload": "settings put global tether_offload_disabled 0",
+  "restore_dpi": "wm density reset",
+
+  "restore_cpu_gov_performance": "cmd power set-fixed-performance-mode-enabled false",
+  "restore_fsync_disable": "setprop persist.sys.fsync.mode 1",
+  "restore_io_crc_disable": "setprop persist.sys.NV_CRC32_EMULATION 1",
+  "restore_scheduler_stats_disable": "setprop persist.sys.io.scheduler_stats 1",
+  "restore_triple_buffering_enable": "setprop debug.sf.triple_buffer 0",
+  "restore_vsync_disable": "setprop debug.sf.disable_vsync 0",
+  "restore_jit_speed_profile": "cmd package compile -m speed -a"
 }

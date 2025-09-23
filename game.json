@@ -120,9 +120,9 @@
     "developer": "Supercell"
   },
   {
-    "nama_game": "Delta Force Agung Ganteng",
-    "nama_paket": "com.garena.game.df",
-    "developer": "Garena Infinite"
+    "nama_game": "Delta Force: Hawk Ops",
+    "nama_paket": "com.levelinfinite.deltaforce.global",
+    "developer": "Level Infinite"
   },
   {
     "nama_game": "Diablo Immortal",
@@ -138,11 +138,6 @@
     "nama_game": "Dream League Soccer 2024",
     "nama_paket": "com.firsttouchgames.dls7",
     "developer": "First Touch Games Ltd."
-  },
-  {
-    "nama_game": "Dunk City Dynasty",
-    "nama_paket": "com.netease.dcd",
-    "developer": "Exptional Global"
   },
   {
     "nama_game": "EA SPORTS FC MOBILE 24",

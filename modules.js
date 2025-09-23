@@ -12,14 +12,6 @@ async function checkModuleExists(moduleName) {
     }
 }
 
-async function loadModules() {
-    allModules = await loadData("cachedModules", MODULES_URL, "module-items");
-    if (allModules) {
-        await Promise.all(allModules.map(m => checkModuleExists(m.name)));
-        renderModules(allModules);
-    }
-}
-
 async function loadFpsModules() {
     allFpsModules = await loadData("cachedFpsModules", FPS_MODULES_URL, "fps-module-items");
     if (allFpsModules) {
@@ -41,41 +33,6 @@ async function loadCommands() {
     RESTORE_COMMANDS = await loadData("cachedRestoreCommands", RESTORE_URL);
 }
 
-function renderModules(modules) {
-    const list = document.getElementById("module-items");
-    list.innerHTML = "";
-    const sorted = [...modules].sort((a, b) => a.name === "STOP MODULE" ? -1 : b.name === "STOP MODULE" ? 1 : 0);
-    sorted.forEach(module => {
-        const item = document.createElement("div");
-        item.className = "bg-gray-800/50 border-l-4 border-purple-500 p-2 rounded-lg mb-1";
-        if (module.name === "STOP MODULE") {
-            item.innerHTML = `<button class="btn btn-primary w-full" onclick="handleModuleAction('STOP MODULE', '${module.url}')">Remove Modules</button>`;
-        } else {
-            item.className += " flex justify-between items-center";
-            item.innerHTML = `<div class="module-text-container"><span class="flex items-center gap-2 text-sm"><i class="fas fa-microchip text-emerald-400 text-sm"></i><span>${module.name}</span></span><p class="text-[10px] text-gray-400">${module.desc}</p></div><label class="switch"><input type="checkbox" ${activeModules.has(module.name) ? 'checked' : ''}><span class="slider"></span></label>`;
-            item.querySelector('input').addEventListener("change", async (e) => {
-                if (e.target.checked) {
-                    if (!(await checkShizukuStatus())) {
-                        getAlpine().showNotification("Shizuku is not running.");
-                        e.target.checked = false;
-                        return;
-                    }
-                    handleModuleAction(module.name, module.url);
-                } else {
-                    if (await getAlpine().showConfirm(`Disable ${module.name}?`)) {
-                        activeModules.delete(module.name);
-                        localStorage.setItem("activeModules", JSON.stringify([...activeModules]));
-                        renderModules(allModules);
-                    } else {
-                        e.target.checked = true;
-                    }
-                }
-            });
-        }
-        list.appendChild(item);
-    });
-}
-
 function renderFpsModules(modules) {
     const container = document.getElementById("fps-module-items");
     container.innerHTML = "";
@@ -87,8 +44,8 @@ function renderFpsModules(modules) {
     });
     container.addEventListener('change', (e) => {
         if (e.target.type === 'radio') {
-            const selectedName = e.target.value,
-                module = allFpsModules.find(m => m.name === selectedName);
+            const selectedName = e.target.value;
+            const module = allFpsModules.find(m => m.name === selectedName);
             if (module) {
                 allFpsModules.forEach(m => activeModules.delete(m.name));
                 activeModules.add(selectedName);
@@ -110,8 +67,8 @@ function renderFakeDevices(devices) {
     });
     container.addEventListener('change', (e) => {
         if (e.target.type === 'radio') {
-            const selectedName = e.target.value,
-                device = allFakeDevices.find(d => d.name === selectedName);
+            const selectedName = e.target.value;
+            const device = allFakeDevices.find(d => d.name === selectedName);
             if (device) {
                 activeFakeDevices.clear();
                 activeFakeDevices.add(selectedName);
@@ -121,7 +78,6 @@ function renderFakeDevices(devices) {
         }
     });
 }
-
 
 function handleModuleAction(moduleName, moduleUrl) {
     const fileName = moduleName.replace(/[^a-zA-Z0-9]/g, '') + ".sh";
@@ -146,8 +102,7 @@ function handleFakeDeviceAction(deviceName, deviceUrl) {
     if (!downloadedModules.has(deviceName)) {
         showDownloadModal(deviceName, deviceUrl);
     } else {
-        const runCommand = `sh ${modulePath} && rm ${modulePath}`;
-        runCommandFlow(runCommand, deviceName);
+        runCommandFlow(`sh ${modulePath} && rm ${modulePath}`, deviceName);
     }
 }
 
@@ -159,8 +114,7 @@ async function handleRestore(moduleName, moduleUrl, stateSet, key, renderFunc, a
     const fileName = moduleName.replace(/[^a-zA-Z0-9]/g, '') + ".sh";
     const modulePath = `/storage/emulated/0/Download/com.fps.injector/${fileName}`;
     const action = async () => {
-        const runCommand = `sh ${modulePath} && rm ${modulePath}`;
-        runCommandFlow(runCommand, moduleName);
+        runCommandFlow(`sh ${modulePath} && rm ${modulePath}`, moduleName);
         stateSet.forEach(item => {
             if (allData.some(d => d.name === item)) stateSet.delete(item);
         });
@@ -169,28 +123,40 @@ async function handleRestore(moduleName, moduleUrl, stateSet, key, renderFunc, a
     };
     if (!downloadedModules.has(moduleName)) {
         showDownloadModal(moduleName, moduleUrl, action);
-    } else {
-        action();
-    }
+    } else { action(); }
 }
 
 function showDownloadModal(moduleName, moduleUrl, callback = null) {
     const alpine = getAlpine();
     alpine.activeModal = 'download';
-    const progressBar = document.getElementById("modal-progress"),
-        statusText = document.getElementById("modal-status"),
-        title = document.getElementById("modal-title");
+
+    const progressCircle = document.getElementById("modal-progress-circle");
+    const progressText = document.getElementById("modal-progress-text");
+    const statusText = document.getElementById("modal-status");
+    const title = document.getElementById("modal-title");
+
     title.innerHTML = `<i class="fas fa-download mr-2"></i>Downloading ${moduleName}`;
     statusText.textContent = "Starting...";
-    progressBar.style.width = "0%";
+    
+    const radius = progressCircle.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
+    progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+    progressCircle.style.strokeDashoffset = circumference;
+    progressText.textContent = "0%";
+    
     window.downloadCallback = callback;
     let progress = 0;
+    
     const interval = setInterval(() => {
         progress = Math.min(progress + 5, 90);
-        progressBar.style.width = `${progress}%`;
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        progressText.textContent = `${progress}%`;
         statusText.textContent = `Progress: ${progress}%`;
     }, 200);
+
     window.downloadingModuleInterval = interval;
+    
     try {
         window.Android.downloadFile(moduleUrl, moduleName);
     } catch (e) {
