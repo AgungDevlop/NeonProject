@@ -43,6 +43,20 @@
                 <div class="card"><h2 class="card-header" data-lang-key="home_fake_device_title"></h2><div class="card-body"><div id="fake-device-items" class="space-y-3"></div><button id="restore-device-btn" class="btn btn-secondary w-full mt-4" data-lang-key="home_restore_device_btn"></button></div></div>
                 <div class="card"><h2 class="card-header" data-lang-key="home_fps_modules_title"></h2><div class="card-body"><div id="fps-module-items" class="space-y-3"></div><button id="restore-fps-btn" class="btn btn-secondary w-full mt-4" data-lang-key="home_restore_fps_btn"></button></div></div>
             </div>
+            
+            <!-- ===== BUILDER TAB ===== -->
+            <div x-show="activeTab === 'builder'" x-transition.opacity.duration.500ms class="space-y-6">
+                <div class="card">
+                    <div class="card-body" id="module-builder-container">
+                        <!-- Builder UI will be dynamically injected here by builder.js -->
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <button id="apply-builder-settings-btn" class="btn btn-primary w-full" data-lang-key="builder_apply_btn"></button>
+                    </div>
+                </div>
+            </div>
 
             <!-- ===== PERFORMANCE TAB ===== -->
             <div x-show="activeTab === 'performance'" x-transition.opacity.duration.500ms class="space-y-6">
@@ -138,8 +152,9 @@
     </div>
 
     <div class="fixed bottom-0 left-0 right-0 z-40 px-4 pb-4">
-        <nav x-ref="nav" class="nav-container max-w-md mx-auto">
+        <nav x-ref="nav" class="nav-container max-w-lg mx-auto">
             <button @click="setActiveTab('home', $event)" data-tab="home" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text" data-lang-key="nav_home"></span></button>
+            <button @click="setActiveTab('builder', $event)" data-tab="builder" class="nav-item"><i class="fas fa-drafting-compass"></i><span class="nav-text" data-lang-key="nav_builder"></span></button>
             <button @click="setActiveTab('performance', $event)" data-tab="performance" class="nav-item"><i class="fas fa-rocket"></i><span class="nav-text" data-lang-key="nav_performance"></span></button>
             <button @click="setActiveTab('network', $event)" data-tab="network" class="nav-item"><i class="fas fa-wifi"></i><span class="nav-text" data-lang-key="nav_network"></span></button>
             <button @click="setActiveTab('tweaks', $event)" data-tab="tweaks" class="nav-item"><i class="fas fa-tools"></i><span class="nav-text" data-lang-key="nav_tweaks"></span></button>
@@ -177,17 +192,8 @@
     <script src="game.js"></script>
     <script src="network.js"></script>
     <script src="tweaks.js"></script>
+    <script src="builder.js"></script>
     <script src="custom.js"></script>
     <script src="main.js"></script>
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PV4883WYS4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-PV4883WYS4');
-</script>
 </body>
 </html>

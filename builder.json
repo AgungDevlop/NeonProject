@@ -1,0 +1,122 @@
+{
+  "battleground": {
+    "titleKey": "builder_battleground_title",
+    "settings": [
+      {
+        "type": "radio",
+        "nameKey": "builder_graphics_quality",
+        "descKey": "builder_graphics_quality_desc",
+        "tweakKey": "bg_graphics",
+        "options": [
+          { "name": "Smooth", "command": "set_game_graphics_smooth" },
+          { "name": "Balanced", "command": "set_game_graphics_balanced" },
+          { "name": "HD", "command": "set_game_graphics_hd" }
+        ]
+      },
+      {
+        "type": "radio",
+        "nameKey": "builder_effect_quality",
+        "descKey": "builder_effect_quality_desc",
+        "tweakKey": "bg_effects",
+        "options": [
+          { "name": "Low", "command": "set_effects_quality_low" },
+          { "name": "Medium", "command": "set_effects_quality_medium" },
+          { "name": "High", "command": "set_effects_quality_high" }
+        ]
+      },
+      {
+        "type": "radio",
+        "nameKey": "builder_refresh_rate",
+        "descKey": "builder_refresh_rate_desc",
+        "tweakKey": "bg_fps",
+        "options": [
+          { "name": "60 Hz", "command": "set_game_fps_60" },
+          { "name": "90 Hz", "command": "set_game_fps_90" },
+          { "name": "120 Hz", "command": "set_game_fps_120" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "nameKey": "builder_touch_response",
+        "descKey": "builder_touch_response_desc",
+        "command": "set_touch_response_high"
+      },
+      {
+        "type": "checkbox",
+        "nameKey": "builder_network_priority",
+        "descKey": "builder_network_priority_desc",
+        "command": "network_profile_gaming"
+      },
+      {
+        "type": "checkbox",
+        "nameKey": "builder_multicore_rendering",
+        "descKey": "builder_multicore_rendering_desc",
+        "command": "set_multicore_rendering_on"
+      }
+    ]
+  },
+  "battleroyale": {
+    "titleKey": "builder_battleroyale_title",
+    "settings": [
+      {
+        "type": "range",
+        "nameKey": "builder_pointer_speed",
+        "descKey": "builder_pointer_speed_desc",
+        "tweakKey": "br_pointer",
+        "min": 0,
+        "max": 7,
+        "step": 1,
+        "default": 0,
+        "commandTemplate": "settings put system pointer_speed {value}"
+      },
+      {
+        "type": "range",
+        "nameKey": "builder_dpi",
+        "descKey": "builder_dpi_desc",
+        "tweakKey": "br_dpi",
+        "min": 320,
+        "max": 560,
+        "step": 8,
+        "default": 411,
+        "commandTemplate": "wm density {value}"
+      },
+      {
+        "type": "radio",
+        "nameKey": "builder_texture_quality",
+        "descKey": "builder_texture_quality_desc",
+        "tweakKey": "br_texture",
+        "options": [
+          { "name": "Low", "command": "set_texture_low" },
+          { "name": "Medium", "command": "set_texture_medium" },
+          { "name": "High", "command": "set_texture_high" }
+        ]
+      },
+      {
+        "type": "radio",
+        "nameKey": "builder_shadow_quality",
+        "descKey": "builder_shadow_quality_desc",
+        "tweakKey": "br_shadow",
+        "options": [
+          { "name": "Disabled", "command": "set_shadows_disable" },
+          { "name": "Enabled", "command": "restore_shadows_disable" }
+        ]
+      },
+      {
+        "type": "radio",
+        "nameKey": "builder_anisotropic",
+        "descKey": "builder_anisotropic_desc",
+        "tweakKey": "br_anisotropic",
+        "options": [
+          { "name": "Disabled", "command": "restore_anisotropic" },
+          { "name": "16x", "command": "set_anisotropic_16x" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "nameKey": "builder_anti_aliasing",
+        "descKey": "builder_anti_aliasing_desc",
+        "command": "force_msaa_on"
+      }
+    ]
+  }
+}

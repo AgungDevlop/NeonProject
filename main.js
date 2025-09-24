@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTweakComponents(); 
         initializeNetworkTab();
         initializeDiagnosisChart(); 
+        initializeBuilder();
         applyStoredTweaks();
 
         const shizukuOk = await checkShizukuStatus();

@@ -37,6 +37,11 @@ body { font-family: 'Exo 2', sans-serif; color: var(--color-text-primary); backg
 .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; }
 input[type="checkbox"]:checked + .slider { background-color: var(--color-primary); box-shadow: 0 0 8px rgba(16, 185, 129, 0.7); }
 input[type="checkbox"]:checked + .slider:before { transform: translateX(18px); }
+.slider-container { display: flex; align-items: center; gap: 1rem; }
+.slider-track { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--color-secondary); border-radius: 8px; outline: none; transition: background 0.2s; }
+.slider-track::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--color-primary-hover); cursor: pointer; border-radius: 50%; box-shadow: 0 0 8px rgba(52, 211, 153, 0.7); }
+.slider-track::-moz-range-thumb { width: 20px; height: 20px; background: var(--color-primary-hover); cursor: pointer; border-radius: 50%; box-shadow: 0 0 8px rgba(52, 211, 153, 0.7); }
+.slider-value { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--color-primary-hover); min-width: 40px; text-align: right; }
 .radio-item { display: flex; align-items: center; background-color: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; padding: 0.75rem; cursor: pointer; border: 1px solid var(--color-border); transition: all 0.2s; }
 .radio-item:hover { background-color: rgba(55, 65, 81, 0.7); border-color: rgba(107, 114, 128, 0.7); }
 .radio-item input[type="radio"] { display: none; }
@@ -65,7 +70,7 @@ input[type="checkbox"]:checked + .slider:before { transform: translateX(18px); }
 .card-subheader { font-weight: 600; color: var(--color-text-secondary); margin-bottom: 0.75rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem; }
 .tweak-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
 .tweak-label { flex-grow: 1; color: var(--color-text-primary); }
-.tweak-description { font-size: 0.75rem; color: var(--color-text-secondary); margin-top: -0.75rem; padding: 0 0.25rem 0.5rem; }
+.tweak-description { font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 0.5rem; padding: 0.75rem; background-color: rgba(3, 7, 18, 0.4); border-radius: 0.5rem; }
 .input-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
 .game-item { display: flex; flex-direction: column; background-color: rgba(55, 65, 81, 0.3); border-radius: 0.5rem; border: 1px solid var(--color-border); transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s; }
 .game-item:hover { transform: translateY(-2px); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
@@ -93,3 +98,11 @@ input[type="checkbox"]:checked + .slider:before { transform: translateX(18px); }
 .btn-3d:active { transform: translateY(4px); box-shadow: none !important; }
 .btn-instagram { background: #d62976; box-shadow: 0 4px 0 #961d53; }
 .btn-tiktok { background: #252525; box-shadow: 0 4px 0 #000000; }
+.builder-tab-btn { flex: 1; padding: 0.75rem 0; font-weight: 600; color: var(--color-text-secondary); background-color: transparent; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.builder-tab-btn.active { color: var(--color-primary-hover); border-bottom-color: var(--color-primary-hover); }
+.builder-pane { display: none; }
+.builder-pane.active { display: block; animation: card-fade-in 0.5s ease-out forwards; }
+.tweak-item-full { border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; margin-bottom: 1rem; }
+.tweak-item-full:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.tooltip-btn { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; padding: 0 0.5rem; opacity: 0.7; transition: all 0.2s; }
+.tooltip-btn:hover { opacity: 1; color: var(--color-primary-hover); }
