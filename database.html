@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon - Module Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body x-data="databaseApp()" class="bg-gray-900 text-gray-200 font-exo min-h-screen flex flex-col">
+    <div id="background-animation"></div>
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 py-6 flex-grow relative z-10">
+        <header class="flex justify-between items-center mb-6">
+            <a href="index.html" class="text-emerald-400 hover:text-emerald-300 transition-colors"><i class="fas fa-arrow-left text-lg"></i></a>
+            <h1 class="text-2xl sm:text-3xl font-bold text-emerald-300 text-center">Module Database</h1>
+            <div class="w-8"></div>
+        </header>
+
+        <div class="card mb-4">
+            <div class="card-body flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-grow">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" class="input w-full pl-10" placeholder="Search modules...">
+                </div>
+                <input type="file" id="local-zip-input" class="hidden" accept=".zip">
+                <a href="https://tawk.to/chat/685e4d34227c3f1910a765f4/default" target="_blank" class="btn btn-secondary w-full sm:w-auto flex-shrink-0">
+                    <i class="fas fa-users mr-2"></i>Join Creator Module
+                </a>
+                <button id="install-local-btn" class="btn btn-secondary w-full sm:w-auto flex-shrink-0">
+                    <i class="fas fa-folder-open mr-2"></i>Install Local Module
+                </button>
+            </div>
+        </div>
+
+        <main class="card">
+            <div id="module-list-container" class="divide-y divide-gray-700">
+                <div id="db-loading" class="text-center p-8">
+                    <i class="fas fa-spinner fa-spin text-emerald-400 text-3xl"></i>
+                    <p class="mt-3 text-sm text-gray-400">Loading module database...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="modal-wrapper" x-show="activeModal" x-transition x-cloak>
+        <div class="modal-content" @click.outside="activeModal === 'download' || activeModal === 'processing' || activeModal === 'confirm' ? null : activeModal = ''">
+            <div x-show="activeModal === 'download'">
+                <h2 id="modal-title" class="modal-header text-center">Downloading Module</h2>
+                <div class="flex justify-center items-center my-4">
+                    <svg class="w-32 h-32" viewBox="0 0 100 100">
+                        <circle class="text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                        <circle id="modal-progress-circle" class="text-emerald-400" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="stroke-dasharray: 283; stroke-dashoffset: 283; transform-origin: center; transform: rotate(-90deg); transition: stroke-dashoffset 0.3s;" />
+                        <text id="modal-progress-text" x="50" y="50" font-family="Verdana" font-size="18" text-anchor="middle" alignment-baseline="middle" class="fill-current text-emerald-300 font-bold">0%</text>
+                    </svg>
+                </div>
+                <p id="modal-status" class="mt-2 text-center text-gray-300 text-sm"></p>
+            </div>
+            <div x-show="activeModal === 'commandOutput'">
+                <h2 class="modal-header">Command Output</h2>
+                <pre id="cmd-output" class="cmd-output"></pre>
+                <button @click="activeModal = ''" class="btn btn-primary w-full mt-4">Close</button>
+            </div>
+             <div x-show="activeModal === 'processing'">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin text-emerald-400 text-3xl"></i>
+                    <p class="mt-2 text-gray-300" x-text="modalMessage"></p>
+                </div>
+            </div>
+            <div x-show="activeModal === 'confirm'" class="text-center">
+                <p class="text-sm text-emerald-200 mb-4" x-text="modalMessage"></p>
+                <div class="flex justify-center gap-3">
+                    <button @click="resolveConfirm(true)" class="btn btn-danger">Yes, Remove</button>
+                    <button @click="resolveConfirm(false)" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification" x-show="notification.show" x-transition><p x-text="notification.message"></p></div>
+
+    <script src="database.js"></script>
+</body>
+</html>
