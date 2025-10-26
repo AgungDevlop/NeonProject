@@ -1,3 +1,10 @@
+const directlinks = [
+    'https://adclickad.com/get/?spot_id=6089412&cat=25&subid=2067093145',
+    'https://enviousgarbage.com/HE9TFh',
+    'https://otieu.com/4/10055984',
+    'https://viikqoye.com/dc/?blockID=388556'
+];
+
 async function checkShizukuStatus() {
     try {
         const status = window.Android?.getShizukuStatus ? await window.Android.getShizukuStatus() : false;
@@ -9,6 +16,7 @@ async function checkShizukuStatus() {
         return false;
     }
 }
+
 function executeShellCommand(command, moduleName, id) {
     return new Promise((resolve, reject) => {
         if (!window.Android?.executeCommand) { return reject(new Error("Android interface not available.")); }
@@ -21,24 +29,37 @@ function executeShellCommand(command, moduleName, id) {
         try { window.Android.executeCommand(command, moduleName, id); } catch (e) { cleanup(); reject(e); }
     });
 }
+
 function runCommandFlow(command, moduleName, metadata = {}) {
     window.isSilentTweak = false; window.commandMetadata = metadata;
     getAlpine().modalMessage = "Loading Ad..."; getAlpine().activeModal = 'processing';
     setTimeout(() => {
         const lastAdTime = localStorage.getItem('lastAdShownTime'); const currentTime = new Date().getTime(); const sessionAdShown = sessionStorage.getItem('adShownThisSession');
-        if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) { localStorage.setItem('lastAdShownTime', currentTime); sessionStorage.setItem('adShownThisSession', 'true'); window.open('https://obqj2.com/4/9587058', '_blank'); }
+        if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) {
+            localStorage.setItem('lastAdShownTime', currentTime);
+            sessionStorage.setItem('adShownThisSession', 'true');
+            const randomLink = directlinks[Math.floor(Math.random() * directlinks.length)];
+            window.open(randomLink, '_blank');
+        }
         window.currentCommand = command; fireAndForgetCommand(command, moduleName, generateRandomId());
     }, 2000);
 }
+
 function runTweakFlow(command, moduleName) {
     window.isSilentTweak = true;
     getAlpine().modalMessage = "Loading Ad..."; getAlpine().activeModal = 'processing';
     setTimeout(() => {
         const lastAdTime = localStorage.getItem('lastAdShownTime'); const currentTime = new Date().getTime(); const sessionAdShown = sessionStorage.getItem('adShownThisSession');
-        if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) { localStorage.setItem('lastAdShownTime', currentTime); sessionStorage.setItem('adShownThisSession', 'true'); window.open('https://obqj2.com/4/9587058', '_blank'); }
+        if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) {
+            localStorage.setItem('lastAdShownTime', currentTime);
+            sessionStorage.setItem('adShownThisSession', 'true');
+            const randomLink = directlinks[Math.floor(Math.random() * directlinks.length)];
+            window.open(randomLink, '_blank');
+        }
         window.currentCommand = command; fireAndForgetCommand(command, moduleName, generateRandomId());
     }, 2000);
 }
+
 function fireAndForgetCommand(command, moduleName, logId) {
     if (!window.Android) { getAlpine().showNotification("Feature only available in the app."); getAlpine().activeModal = ''; return; }
     try {
@@ -46,6 +67,7 @@ function fireAndForgetCommand(command, moduleName, logId) {
         if (moduleName !== "SilentOp") { getAlpine().modalMessage = `Executing ${moduleName}...`; getAlpine().activeModal = 'processing'; }
     } catch (e) { console.error(`Error firing command for ${moduleName}:`, e); getAlpine().showNotification(`Failed to start ${moduleName}.`); if (moduleName !== "SilentOp") window.runComplete(moduleName, false, logId); }
 }
+
 window.onShellOutput = function(moduleName, output, logId) {
     const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
     if (!silentOps.includes(moduleName)) {
@@ -57,6 +79,7 @@ window.onShellOutput = function(moduleName, output, logId) {
         window.Android?.saveLog?.(window.currentOutput, logId);
     }
 };
+
 window.downloadComplete = function(moduleName, success) {
     const alpine = getAlpine();
     const progressCircle = document.querySelector(".circular-progress");
@@ -75,6 +98,7 @@ window.downloadComplete = function(moduleName, success) {
         else { const module = allFpsModules.find(m => m.name === moduleName); const fakeDevice = allFakeDevices.find(d => d.name === moduleName); if (module) { handleModuleAction(module.name, module.url); } else if (fakeDevice) { handleFakeDeviceAction(fakeDevice.name, fakeDevice.url); } }
     } else { getAlpine().showNotification(`Download failed for ${moduleName}.`); window.runComplete(moduleName, false, null); }
 };
+
 window.runComplete = async function(moduleName, success, logId) {
     const alpine = getAlpine();
     const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
