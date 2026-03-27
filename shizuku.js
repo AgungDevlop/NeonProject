@@ -1,10 +1,10 @@
 async function checkShizukuStatus() {
     try {
         const status = window.Android?.getShizukuStatus ? await window.Android.getShizukuStatus() : false;
-        document.getElementById("shizuku-status").innerHTML = `<i class="fas ${status ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${status ? '#10b981' : '#ef4444'};"></i><span>Shizuku: ${status ? 'Running' : 'Not Running'}</span>`;
+        document.getElementById("shizuku-status").innerHTML = `<i class="fas ${status ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${status ? '#10b981' : '#ef4444'};"></i><span>Terminal: ${status ? 'Active' : 'Offline'}</span>`;
         return status;
     } catch (e) {
-        document.getElementById("shizuku-status").innerHTML = `<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i><span>Shizuku: Error</span>`;
+        document.getElementById("shizuku-status").innerHTML = `<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i><span>Terminal: Error</span>`;
         return false;
     }
 }
