@@ -156,7 +156,7 @@ document.addEventListener('alpine:init', () => {
 
         loadDirectory(path) {
             if (!window.Android || !window.Android.listDirectory) {
-                this.showNotification("Shizuku directory listing not available");
+                this.showNotification("Terminal directory listing not available");
                 return;
             }
             try {
