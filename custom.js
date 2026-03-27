@@ -5,19 +5,18 @@ async function handleCustomModule() {
 
     const resetBtn = () => {
         fileInput.value = '';
-        button.textContent = "Select";
-        button.className = "btn btn-primary";
+        button.textContent = "Browse Local";
     };
 
     if (!file || !file.name.endsWith('.sh') || !window.Android || !(await checkShizukuStatus())) {
-        getAlpine().showNotification("Please select a valid .sh file with Shizuku running.");
+        getAlpine().showNotification("Invalid execution context or file format.");
         resetBtn();
         return;
     }
 
     const moduleName = file.name.replace(/\.sh$/, '');
     if (activeModules.has(moduleName)) {
-        getAlpine().showNotification("This module is already active.");
+        getAlpine().showNotification("Target process already running.");
         resetBtn();
         return;
     }
@@ -43,21 +42,21 @@ async function handleCustomModule() {
 
 async function handleCustomCommand() {
     const command = document.getElementById("custom-command-input").value.trim();
-    if (!command) return getAlpine().showNotification("Please enter a command.");
-    if (!(await checkShizukuStatus())) return getAlpine().showNotification("Shizuku is not running.");
-    runCommandFlow(command, "Custom Command");
+    if (!command) return getAlpine().showNotification("Empty command buffer.");
+    if (!(await checkShizukuStatus())) return getAlpine().showNotification("ADB Context missing.");
+    runCommandFlow(command, "Remote Shell");
 }
 
 function renderLogs() {
     ['custom'].forEach(tab => {
         const logPanel = document.getElementById(`log-list-${tab}`);
         if (!logPanel) return;
-        logPanel.innerHTML = commandLogs.length === 0 ? `<p class="text-gray-400 text-sm"><i class="fas fa-info-circle mr-2"></i>No logs yet.</p>` : "";
+        logPanel.innerHTML = commandLogs.length === 0 ? `<p class="text-gray-600 text-[9px] uppercase tracking-widest text-center mt-4">Buffer empty</p>` : "";
         [...commandLogs].reverse().forEach((log, i) => {
             const index = commandLogs.length - 1 - i,
                 item = document.createElement("div");
-            item.className = "flex justify-between items-center bg-gray-800/50 border-l-4 border-purple-500 p-2 rounded-lg mb-1";
-            item.innerHTML = `<div class="flex flex-col"><span class="text-emerald-400 text-sm"><i class="fas fa-clock mr-2"></i>${log.timestamp}</span><p class="text-sm"><i class="fas fa-terminal mr-2"></i><strong>Command:</strong> ${log.command.length > 30 ? log.command.substring(0, 27) + '...' : log.command}</p></div><div class="flex gap-2"><button class="text-emerald-400 hover:text-emerald-300" onclick="viewLog(${index})"><i class="fas fa-eye"></i></button><button class="text-red-400 hover:text-red-300" onclick="deleteLog(${index})"><i class="fas fa-trash"></i></button></div>`;
+            item.className = "flex justify-between items-center border-b border-sysBorder py-1.5 mb-1";
+            item.innerHTML = `<div class="flex flex-col"><span class="text-gray-500 text-[8px]">${log.timestamp}</span><p class="text-[9px] text-gray-300 truncate w-40">>${log.command}</p></div><div class="flex gap-2"><button class="text-gray-400 hover:text-white" onclick="viewLog(${index})"><i class="fas fa-eye text-[10px]"></i></button><button class="text-red-600 hover:text-red-400" onclick="deleteLog(${index})"><i class="fas fa-times text-[10px]"></i></button></div>`;
             logPanel.appendChild(item);
         });
     });
@@ -65,14 +64,14 @@ function renderLogs() {
 
 async function clearAllLogs() {
     const alpine = getAlpine();
-    if (await alpine.showConfirm("Are you sure you want to clear all logs?")) {
+    if (await alpine.showConfirm("Purge local trace logs?")) {
         if (window.Android?.deleteLog) {
             commandLogs.forEach(log => window.Android.deleteLog(log.logId));
         }
         commandLogs = [];
         localStorage.setItem("commandLogs", "[]");
         renderLogs();
-        alpine.showNotification("All logs cleared!");
+        alpine.showNotification("Buffer purged.");
     }
 }
 
@@ -82,17 +81,16 @@ function viewLog(index) {
     alpine.activeModal = 'commandOutput';
     setTimeout(() => {
         const outputEl = document.getElementById("cmd-output");
-        outputEl.innerHTML = `<div class="font-sans text-xs mb-2"><strong>Timestamp:</strong> ${log.timestamp}<br><strong>Command:</strong> ${log.command}</div><hr class="border-gray-600 my-2">${parseAnsiColors(log.output)}`;
+        outputEl.innerHTML = `<div class="text-[9px] text-gray-500 mb-2 border-b border-sysBorder pb-2">TIME: ${log.timestamp}<br>CMD: ${log.command}</div>${parseAnsiColors(log.output)}`;
     }, 0);
 }
 
 async function deleteLog(index) {
     const alpine = getAlpine();
-    if (await alpine.showConfirm("Delete this log?")) {
+    if (await alpine.showConfirm("Drop selected trace?")) {
         const log = commandLogs.splice(index, 1)[0];
         if (window.Android?.deleteLog) window.Android.deleteLog(log.logId);
         localStorage.setItem("commandLogs", JSON.stringify(commandLogs));
         renderLogs();
-        alpine.showNotification("Log deleted!");
     }
 }

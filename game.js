@@ -26,6 +26,8 @@ async function scanInstalledGames() {
     loadingDiv.classList.remove('hidden');
     listsDiv.classList.add('hidden');
 
+    await new Promise(resolve => setTimeout(resolve, 150));
+
     if (!(await checkShizukuStatus())) {
         getAlpine().showNotification("Shizuku is not running. Cannot scan games.");
         loadingDiv.classList.add('hidden');
@@ -36,25 +38,17 @@ async function scanInstalledGames() {
     let installedPackages = new Set();
 
     try {
-        console.log("Attempting to scan packages using shell command...");
         const command = "pm list packages -3 -e | cut -d : -f 2";
         const output = await executeShellCommand(command, 'SilentOp', `game-scan-shell-${generateRandomId()}`);
         installedPackages = new Set(output.split('\n').map(line => line.trim()).filter(Boolean));
-        console.log(`Shell command successful. Found ${installedPackages.size} packages.`);
-
     } catch (e) {
-        console.warn("Shell command failed, falling back to native Java method.", e);
         getAlpine().showNotification("Shell scan failed. Trying native method...");
-
         if (window.Android && window.Android.getInstalledPackages) {
             try {
-                console.log("Calling native getInstalledPackages()...");
                 const packagesJson = await window.Android.getInstalledPackages();
                 const packageList = JSON.parse(packagesJson);
                 installedPackages = new Set(packageList);
-                console.log(`Native method successful. Found ${installedPackages.size} packages.`);
             } catch (nativeError) {
-                console.error("Native package scan also failed:", nativeError);
                 getAlpine().showNotification("Error: Both scan methods failed.");
                 loadingDiv.classList.add('hidden');
                 listsDiv.classList.remove('hidden');
@@ -72,14 +66,12 @@ async function scanInstalledGames() {
         lastFoundGames = allGames.filter(game => installedPackages.has(game.nama_paket));
         renderGames(lastFoundGames);
     } catch (processingError) {
-        console.error("Error processing scan results:", processingError);
         getAlpine().showNotification("Error displaying scanned games.");
     } finally {
         loadingDiv.classList.add('hidden');
         listsDiv.classList.remove('hidden');
     }
 }
-
 
 function renderGames(foundGames = lastFoundGames) {
     const selectedList = document.getElementById("selected-games-list");
@@ -161,12 +153,15 @@ async function boostGame(packageName, gameName) {
     }
 
     if (!PERFORMANCE_COMMANDS || !PERFORMANCE_COMMANDS.getSystemStats || !PERFORMANCE_COMMANDS.fullGameBoost) {
-        getAlpine().showNotification("Performance commands not loaded. Check performance.json.");
+        getAlpine().showNotification("Performance commands not loaded.");
         return;
     }
 
+    getAlpine().modalMessage = `PREPARING ${gameName.toUpperCase()}...`;
+    getAlpine().activeModal = 'processing';
+    await new Promise(resolve => setTimeout(resolve, 150));
+
     try {
-        getAlpine().showNotification("Gathering initial system stats...");
         const beforeOutput = await executeShellCommand(PERFORMANCE_COMMANDS.getSystemStats, "SilentOp", `stats-before-${generateRandomId()}`);
         boostState.before = parseSystemStats(beforeOutput);
 
@@ -175,12 +170,11 @@ async function boostGame(packageName, gameName) {
 
         runCommandFlow(finalCommand, `Boosting ${gameName}`);
     } catch (e) {
+        getAlpine().activeModal = '';
         getAlpine().showNotification("Failed to start boost process.");
-        console.error("Boost process failed:", e);
     }
 }
 
-// ===== PENAMBAHAN FUNGSI BARU =====
 async function restoreGameSettings() {
     if (!(await checkShizukuStatus())) {
         getAlpine().showNotification("Shizuku is not running.");
@@ -189,7 +183,6 @@ async function restoreGameSettings() {
 
     const confirmed = await getAlpine().showConfirm("Are you sure you want to restore all performance settings to default? A reboot is recommended after this action.");
     if (!confirmed) {
-        getAlpine().showNotification("Restore cancelled.");
         return;
     }
 
@@ -202,18 +195,14 @@ async function restoreGameSettings() {
         
         if (restoreConfig && restoreConfig.restoreSystemDefaults) {
             const commandToRun = restoreConfig.restoreSystemDefaults;
-            // Fungsi runCommandFlow akan menangani tampilan proses, eksekusi, dan output
             runCommandFlow(commandToRun, "Restoring Default Settings");
         } else {
-            throw new Error("'restoreSystemDefaults' command not found in restore_game.json");
+            throw new Error("'restoreSystemDefaults' command not found");
         }
     } catch (error) {
-        console.error("Error during restore process:", error);
         getAlpine().showNotification(`Restore Error: ${error.message}`);
-        getAlpine().hideProcessing();
     }
 }
-// =====================================
 
 function parseSystemStats(output) {
     const parts = output.split('---NEON_STATS_SPLIT---');

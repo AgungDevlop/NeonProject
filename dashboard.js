@@ -7,17 +7,15 @@ async function checkDnsStatus() {
         const output = await executeShellCommand(command, 'DnsCheck', `dns-check-${generateRandomId()}`);
         if (output.trim() === "ADBLOCK_DNS_DETECTED") {
             getAlpine().activeModal = 'dnsWarning';
-        } else {
-            loadAdScript();
         }
     } catch (e) {
-        console.error("DNS check failed:", e);
+        console.error(e);
     }
 }
 
 async function initializeDashboard() {
     if (!(await checkShizukuStatus())) {
-        document.getElementById('dashboard-loading').innerHTML = `<p class="text-yellow-400 text-sm"><i class="fas fa-exclamation-triangle mr-2"></i>Shizuku not running. Cannot fetch live data.</p>`;
+        document.getElementById('dashboard-loading').innerHTML = `<p class="text-red-500 text-[10px] font-mono">NO ADB CONTEXT</p>`;
         return;
     }
     const command = [
@@ -26,7 +24,7 @@ async function initializeDashboard() {
         "getprop ro.product.cpu.abi",
         "getprop ro.build.version.sdk",
         "getprop ro.build.id",
-        "[ $(su -c 'echo 1' 2>/dev/null) ] && echo 'Yes' || echo 'No'",
+        "[ $(su -c 'echo 1' 2>/dev/null) ] && echo 'GRANTED' || echo 'DENIED'",
         "uptime -p"
     ].join(" && echo '---NEON_SPLIT---' && ");
     try {
@@ -44,8 +42,7 @@ async function initializeDashboard() {
         if (realtimeUpdateInterval) clearInterval(realtimeUpdateInterval);
         realtimeUpdateInterval = setInterval(updateRealtimeInfo, 2000);
     } catch (e) {
-        console.error("Failed to initialize dashboard:", e);
-        document.getElementById('dashboard-loading').innerHTML = `<p class="text-red-400 text-sm"><i class="fas fa-exclamation-circle mr-2"></i>Failed to load device info.</p>`;
+        document.getElementById('dashboard-loading').innerHTML = `<p class="text-red-500 text-[10px] font-mono">PROBE FAILED</p>`;
     }
 }
 
@@ -86,10 +83,8 @@ async function updateRealtimeInfo() {
         const batteryInfo = parts[3] ?? '';
         document.getElementById('battery-level').textContent = batteryInfo.match(/level: (\d+)/)?.[1] ?? '--';
         document.getElementById('battery-temp').textContent = ((parseInt(batteryInfo.match(/temperature: (\d+)/)?.[1] ?? 0)) / 10).toFixed(1);
-        document.getElementById('battery-status-icon').className = batteryInfo.match(/status: 2/)?.[0] ? 'fas fa-bolt charging' : 'fas fa-battery-three-quarters';
+        document.getElementById('battery-status-icon').className = batteryInfo.match(/status: 2/)?.[0] ? 'fas fa-bolt text-accentRed' : 'fas fa-battery-three-quarters text-yellow-600';
     } catch (e) {
-        console.error("Failed to update real-time info:", e);
         clearInterval(realtimeUpdateInterval);
-        getAlpine().showNotification("Lost connection for real-time data.");
     }
 }

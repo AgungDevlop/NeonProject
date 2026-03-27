@@ -34,7 +34,6 @@ class PingOptimizer {
   }
 
   async activateDns() {
-    await this.withAd();
     const cmds = [
       'cmd netd resolver flushdefaultif',
       'cmd netd resolver flushif wlan0',
@@ -60,7 +59,6 @@ class PingOptimizer {
   }
 
   async deactivateDns() {
-    await this.withAd();
     const cmds = [
       'cmd netpolicy set restrict-background false',
       'for app in $(cmd package list packages -3 --user 0 | cut -f2 -d:); do UID=$(cmd package resolve-uid --user 0 $app 2>/dev/null | grep -oE "[0-9]+"); if [ -n "$UID" ]; then cmd netpolicy remove restrict-background-blacklist $UID; cmd netpolicy remove restrict-background-whitelist $UID; cmd netpolicy remove app-idle-whitelist $UID; fi; done',
@@ -78,7 +76,6 @@ class PingOptimizer {
   }
 
   async activateBufferOptimization() {
-    await this.withAd();
     const cmds = [
       'settings put global tcp_default_init_rwnd 60',
       'settings put global captive_portal_detection_enabled 0',
@@ -90,7 +87,6 @@ class PingOptimizer {
   }
 
   async deactivateBufferOptimization() {
-    await this.withAd();
     const cmds = [
       'settings put global tcp_default_init_rwnd 10',
       'settings put global captive_portal_detection_enabled 1',
@@ -107,7 +103,6 @@ class PingOptimizer {
   }
 
   async activateHandoverOptimization() {
-    await this.withAd();
     this.runCmds([
       'settings put global wifi_scan_always_enabled 1',
       'settings put global wifi_sleep_policy 2',
@@ -118,7 +113,6 @@ class PingOptimizer {
   }
 
   async deactivateHandoverOptimization() {
-    await this.withAd();
     this.runCmds([
       'settings put global wifi_scan_always_enabled 0',
       'settings put global wifi_sleep_policy 1',
@@ -130,42 +124,6 @@ class PingOptimizer {
 
   runCmds(commands, modName) {
     commands.forEach(c => executeShellCommand(c, modName, `cmd-${Date.now()}-${Math.random()}`));
-  }
-
-  async withAd() {
-    const alpine = getAlpine();
-    alpine.activeModal = 'download';
-    const progressBar = document.getElementById('modal-progress');
-    const statusText = document.getElementById('modal-status');
-    const title = document.getElementById('modal-title');
-    title.innerHTML = '<i class="fas fa-ad mr-2"></i>Loading Ad';
-    statusText.textContent = 'Starting…';
-    progressBar.style.width = '0%';
-    let progress = 0;
-    await new Promise(resolve => {
-      const interval = setInterval(() => {
-        progress = Math.min(progress + 20, 100);
-        progressBar.style.width = `${progress}%`;
-        statusText.textContent = `Progress: ${progress}%`;
-        if (progress === 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            const lastAdTime = localStorage.getItem('lastAdShownTime');
-            const currentTime = new Date().getTime();
-            const sessionAdShown = sessionStorage.getItem('adShownThisSession');
-            
-            if (!sessionAdShown && (!lastAdTime || (currentTime - lastAdTime > 60000))) {
-              localStorage.setItem('lastAdShownTime', currentTime);
-              sessionStorage.setItem('adShownThisSession', 'true');
-              window.open('https://obqj2.com/4/9587058', '_blank');
-            }
-            
-            alpine.activeModal = '';
-            resolve();
-          }, 300);
-        }
-      }, 300);
-    });
   }
 
   async testPing() {

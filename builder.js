@@ -13,12 +13,12 @@ async function renderBuilderUI() {
     if (!container || !builderConfig) return;
 
     const tabs = `
-        <div class="flex border-b border-gray-700 mb-4">
-            <button class="builder-tab-btn active" data-target="battleground-settings">
-                <i class="fas fa-chess-knight mr-2"></i><span data-lang-key="builder_battleground_title"></span>
+        <div class="flex border-b border-sysBorder mb-4 gap-2">
+            <button class="builder-tab-btn active flex-1 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 border-b-2 border-transparent transition-colors" data-target="battleground-settings">
+                <i class="fas fa-chess-knight mr-2"></i>Battleground
             </button>
-            <button class="builder-tab-btn" data-target="battleroyale-settings">
-                <i class="fas fa-crosshairs mr-2"></i><span data-lang-key="builder_battleroyale_title"></span>
+            <button class="builder-tab-btn flex-1 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 border-b-2 border-transparent transition-colors" data-target="battleroyale-settings">
+                <i class="fas fa-crosshairs mr-2"></i>Battle Royale
             </button>
         </div>
     `;
@@ -26,23 +26,20 @@ async function renderBuilderUI() {
     let content = '';
     for (const genre in builderConfig) {
         const config = builderConfig[genre];
-        content += `<div id="${genre}-settings" class="builder-pane space-y-6 ${genre === 'battleground' ? 'active' : ''}">`;
+        content += `<div id="${genre}-settings" class="builder-pane space-y-4 ${genre === 'battleground' ? 'block' : 'hidden'}">`;
 
         config.settings.forEach(tweak => {
-            const nameKey = tweak.nameKey;
-            const descKey = tweak.descKey;
-
-            content += '<div class="tweak-item-full">';
+            content += '<div class="bg-black border border-sysBorder p-3 rounded-sm">';
             if (tweak.type === 'checkbox') {
-                content += `<div class="tweak-item"><span class="tweak-label" data-lang-key="${nameKey}"></span> <button class="tooltip-btn"><i class="fas fa-question-circle"></i></button> <label class="switch"><input type="checkbox" class="builder-input" data-command="${tweak.command}"><span class="slider"></span></label></div><p class="tweak-description hidden" data-lang-key="${descKey}"></p>`;
+                content += `<div class="flex justify-between items-center mb-1"><span class="text-[10px] font-bold text-gray-200 uppercase tracking-widest">${tweak.nameKey}</span><label class="relative"><input type="checkbox" class="builder-input sr-only peer" data-command="${tweak.command}"><div class="hw-switch"></div></label></div><p class="text-[9px] text-gray-500 font-mono">${tweak.descKey}</p>`;
             } else if (tweak.type === 'radio') {
-                content += `<h3 class="input-label flex items-center gap-2" data-lang-key="${nameKey}"></h3>`;
+                content += `<h3 class="text-[10px] font-bold text-gray-200 uppercase tracking-widest mb-2">${tweak.nameKey}</h3><div class="space-y-2">`;
                 tweak.options.forEach((opt, index) => {
-                    content += `<div class="radio-item mb-2"><input type="radio" id="${tweak.tweakKey}-${index}" name="${tweak.tweakKey}" class="builder-input" data-command="${opt.command}" ${index === 0 ? 'checked' : ''}><label for="${tweak.tweakKey}-${index}">${opt.name}</label></div>`;
+                    content += `<div class="flex items-center gap-2"><input type="radio" id="${tweak.tweakKey}-${index}" name="${tweak.tweakKey}" class="builder-input" data-command="${opt.command}" ${index === 0 ? 'checked' : ''}><label for="${tweak.tweakKey}-${index}" class="text-[10px] font-mono text-gray-400">${opt.name}</label></div>`;
                 });
-                content += `<p class="tweak-description hidden" data-lang-key="${descKey}"></p>`;
+                content += `</div><p class="text-[9px] text-gray-500 font-mono mt-2">${tweak.descKey}</p>`;
             } else if (tweak.type === 'range') {
-                content += `<div class="slider-container"><label for="${tweak.tweakKey}" class="input-label flex items-center gap-2" data-lang-key="${nameKey}"></label><input id="${tweak.tweakKey}" type="range" min="${tweak.min}" max="${tweak.max}" step="${tweak.step}" value="${tweak.default}" class="builder-input slider-track" data-command-template="${tweak.commandTemplate}"><span id="${tweak.tweakKey}-value" class="slider-value">${tweak.default}</span></div><p class="tweak-description hidden" data-lang-key="${descKey}"></p>`;
+                content += `<div class="flex flex-col gap-2"><label for="${tweak.tweakKey}" class="text-[10px] font-bold text-gray-200 uppercase tracking-widest flex justify-between">${tweak.nameKey} <span id="${tweak.tweakKey}-value" class="text-accentRed">${tweak.default}</span></label><input id="${tweak.tweakKey}" type="range" min="${tweak.min}" max="${tweak.max}" step="${tweak.step}" value="${tweak.default}" class="builder-input w-full accent-accentRed bg-sysBg" data-command-template="${tweak.commandTemplate}"></div><p class="text-[9px] text-gray-500 font-mono mt-1">${tweak.descKey}</p>`;
             }
             content += '</div>';
         });
@@ -51,7 +48,6 @@ async function renderBuilderUI() {
     }
 
     container.innerHTML = tabs + content;
-    translateUI();
 }
 
 function attachBuilderEventListeners() {
@@ -60,22 +56,15 @@ function attachBuilderEventListeners() {
 
     container.querySelectorAll('.builder-tab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            container.querySelectorAll('.builder-tab-btn').forEach(b => b.classList.remove('active'));
-            container.querySelectorAll('.builder-pane').forEach(p => p.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            const targetPane = document.getElementById(e.currentTarget.dataset.target);
-            if (targetPane) {
-                targetPane.classList.add('active');
-            }
-        });
-    });
-
-    container.querySelectorAll('.tooltip-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const description = e.currentTarget.parentElement.nextElementSibling;
-            if (description && description.classList.contains('tweak-description')) {
-                description.classList.toggle('hidden');
-            }
+            container.querySelectorAll('.builder-tab-btn').forEach(b => { b.classList.remove('active', 'text-accentRed', 'border-accentRed'); b.classList.add('text-gray-500', 'border-transparent'); });
+            container.querySelectorAll('.builder-pane').forEach(p => p.classList.add('hidden'));
+            
+            const target = e.currentTarget;
+            target.classList.remove('text-gray-500', 'border-transparent');
+            target.classList.add('active', 'text-accentRed', 'border-accentRed');
+            
+            const targetPane = document.getElementById(target.dataset.target);
+            if (targetPane) targetPane.classList.remove('hidden');
         });
     });
     
@@ -90,7 +79,7 @@ function attachBuilderEventListeners() {
 }
 
 function applyGeneratedSettings() {
-    const activePane = document.querySelector('.builder-pane.active');
+    const activePane = Array.from(document.querySelectorAll('.builder-pane')).find(p => !p.classList.contains('hidden'));
     if (!activePane) return;
     
     const genre = activePane.id.replace('-settings', '');
@@ -112,10 +101,9 @@ function applyGeneratedSettings() {
 
     if (commands.length > 0) {
         const finalCommand = commands.join(' && ');
-        const genreTitle = getLangString(builderConfig[genre].titleKey);
-        runCommandFlow(finalCommand, getLangString('builder_notification_title', { genre: genreTitle }));
-        getAlpine().showNotification(getLangString('notification_builder_applied', { genre: genreTitle }));
+        runCommandFlow(finalCommand, `Compile ${genre}`);
+        getAlpine().showNotification(`Configuration pushed to target.`);
     } else {
-        getAlpine().showNotification(getLangString('notification_builder_no_changes'));
+        getAlpine().showNotification(`No parameters modified.`);
     }
 }

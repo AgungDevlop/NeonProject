@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Neon Core Database</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { sysBg: '#050505', sysCard: '#0f0f11', sysBorder: '#27272a', accentRed: '#dc2626' }
+                }
+            }
+        }
+    </script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        body { background-color: #050505; color: #d4d4d8; -webkit-tap-highlight-color: transparent; top: 0 !important; position: static !important; }
+        .btn-press:active { transform: scale(0.97); opacity: 0.8; }
+        .hw-switch { width: 38px; height: 18px; background-color: #18181b; border: 1px solid #3f3f46; position: relative; transition: all 0.2s; cursor: pointer; border-radius: 2px; }
+        .hw-switch::after { content: ''; position: absolute; top: 1px; left: 1px; width: 14px; height: 14px; background-color: #71717a; border-radius: 1px; transition: transform 0.2s; }
+        input:checked + .hw-switch { background-color: #450a0a; border-color: #dc2626; }
+        input:checked + .hw-switch::after { transform: translateX(20px); background-color: #ef4444; }
+        .goog-te-banner-frame, .skiptranslate { display: none !important; }
+        #google_translate_element { display: none !important; }
+        .goog-tooltip, .goog-tooltip:hover { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+    </style>
+</head>
+<body x-data="databaseApp()" class="flex flex-col min-h-screen">
+    <div id="google_translate_element"></div>
+    
+    <header class="h-[56px] shrink-0 bg-sysBg border-b border-sysBorder flex items-center justify-between px-4 z-20 shadow-sm sticky top-0">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="btn-press text-gray-400 hover:text-accentRed"><i class="fas fa-arrow-left text-lg"></i></a>
+            <h1 class="text-[15px] font-bold text-gray-100 uppercase tracking-widest font-mono">Module DB</h1>
+        </div>
+    </header>
+
+    <main class="flex-1 p-4 max-w-4xl mx-auto w-full space-y-4">
+        
+        <div class="bg-sysCard border border-sysBorder rounded-sm p-4 flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-grow">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                <input type="text" id="search-input" class="w-full bg-black border border-sysBorder rounded-sm pl-8 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-accentRed font-mono" placeholder="Query target...">
+            </div>
+            <input type="file" id="local-zip-input" class="hidden" accept=".zip">
+            <button id="install-local-btn" class="btn-press bg-[#1a0f0f] border border-accentRed/30 text-accentRed px-4 py-2.5 rounded-sm text-[10px] font-bold uppercase tracking-widest font-mono whitespace-nowrap w-full sm:w-auto">
+                <i class="fas fa-folder-open mr-1.5"></i>Flash Local
+            </button>
+        </div>
+
+        <div class="bg-sysCard border border-sysBorder rounded-sm overflow-hidden">
+            <div class="px-4 py-2 border-b border-sysBorder bg-black/50">
+                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Repository Data</h3>
+            </div>
+            <div id="module-list-container" class="divide-y divide-sysBorder bg-black/20">
+                <div id="db-loading" class="text-center py-10">
+                    <i class="fas fa-circle-notch fa-spin text-accentRed text-2xl mb-3"></i>
+                    <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase">Fetching Index...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-show="activeModal" x-transition.opacity x-cloak>
+        <div class="bg-sysCard border border-sysBorder rounded-sm p-6 w-full max-w-sm shadow-2xl relative" @click.outside="['download', 'processing', 'confirm'].includes(activeModal) ? null : activeModal = ''">
+            
+            <div x-show="activeModal === 'download'" class="text-center">
+                <h2 class="text-[11px] font-bold text-gray-200 font-mono tracking-widest uppercase mb-5">RX PAYLOAD...</h2>
+                <div class="relative w-16 h-16 mx-auto mb-4">
+                    <svg class="w-full h-full transform -rotate-90"><circle class="text-sysBorder" stroke-width="3" stroke="currentColor" fill="transparent" r="30" cx="32" cy="32" /><circle id="modal-progress-circle" class="text-accentRed transition-all" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="transparent" r="30" cx="32" cy="32" stroke-dasharray="188" stroke-dashoffset="188" /></svg>
+                    <div class="absolute inset-0 flex items-center justify-center"><text id="modal-progress-text" class="text-xs font-bold font-mono text-white">0%</text></div>
+                </div>
+                <p id="modal-status" class="text-[9px] text-gray-500 font-mono uppercase"></p>
+            </div>
+
+            <div x-show="activeModal === 'processing'" class="text-center py-5">
+                <i class="fas fa-cog fa-spin text-accentRed text-2xl mb-4"></i>
+                <p class="text-[10px] font-bold font-mono text-gray-300 uppercase tracking-widest" x-text="modalMessage"></p>
+            </div>
+
+            <div x-show="activeModal === 'confirm'">
+                <h2 class="text-xs font-bold text-white mb-2 font-mono uppercase border-l-2 border-accentRed pl-2">System Prompt</h2>
+                <p class="text-xs text-gray-400 mb-6 font-mono" x-text="modalMessage"></p>
+                <div class="flex justify-end gap-2">
+                    <button @click="resolveConfirm(false)" class="btn-press py-2 px-4 text-gray-400 font-mono text-[10px] font-bold uppercase tracking-widest hover:text-white">Abort</button>
+                    <button @click="resolveConfirm(true)" class="btn-press py-2 px-4 bg-[#1a0f0f] border border-accentRed/50 text-accentRed rounded-sm font-mono text-[10px] font-bold uppercase tracking-widest">Exec</button>
+                </div>
+            </div>
+
+            <div x-show="activeModal === 'commandOutput'">
+                <h2 class="text-[10px] font-bold text-gray-400 font-mono uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-terminal text-accentRed"></i> STDOUT</h2>
+                <pre id="cmd-output" class="bg-black border border-sysBorder rounded-sm p-3 h-48 overflow-y-auto font-mono text-[9px] text-gray-300 mb-4 whitespace-pre-wrap"></pre>
+                <button @click="activeModal = ''" class="btn-press w-full py-2 bg-white/10 hover:bg-white/20 text-white font-bold font-mono tracking-widest uppercase text-[10px] rounded-sm">Close</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="notification" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[110] pointer-events-none w-max" x-show="notification.show" x-transition x-cloak>
+        <div class="bg-gray-200 text-black rounded-sm px-4 py-2.5 shadow-lg flex items-center gap-2">
+            <i class="fas fa-check text-black text-[11px]"></i>
+            <p class="text-[10px] font-bold font-mono uppercase tracking-wider" x-text="notification.message"></p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script src="database.js"></script>
+</body>
+</html>

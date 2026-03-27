@@ -39,7 +39,7 @@
         "type": "checkbox",
         "nameKey": "builder_touch_response",
         "descKey": "builder_touch_response_desc",
-        "command": "set_touch_response_high"
+        "command": "touch_boost_on && settings put system high_touch_sensitivity_enable 1 && settings put system scroll_friction 0.010 && settings put global block_untrusted_touches 0"
       },
       {
         "type": "checkbox",
@@ -92,30 +92,22 @@
         ]
       },
       {
-        "type": "radio",
-        "nameKey": "builder_shadow_quality",
-        "descKey": "builder_shadow_quality_desc",
-        "tweakKey": "br_shadow",
-        "options": [
-          { "name": "Disabled", "command": "set_shadows_disable" },
-          { "name": "Enabled", "command": "restore_shadows_disable" }
-        ]
-      },
-      {
-        "type": "radio",
-        "nameKey": "builder_anisotropic",
-        "descKey": "builder_anisotropic_desc",
-        "tweakKey": "br_anisotropic",
-        "options": [
-          { "name": "Disabled", "command": "restore_anisotropic" },
-          { "name": "16x", "command": "set_anisotropic_16x" }
-        ]
+        "type": "checkbox",
+        "nameKey": "Disable OEM Bloat & Thermal",
+        "descKey": "Bypass GOS/Joyose and disable thermal throttling.",
+        "command": "disable_oem_bloat && cmd thermalservice override-status 0"
       },
       {
         "type": "checkbox",
-        "nameKey": "builder_anti_aliasing",
-        "descKey": "builder_anti_aliasing_desc",
-        "command": "force_msaa_on"
+        "nameKey": "Force Fast DEX Compile",
+        "descKey": "Compile apps ahead-of-time for maximum speed.",
+        "command": "force_dex_compile"
+      },
+      {
+        "type": "checkbox",
+        "nameKey": "Force 4x MSAA & Anti-Aliasing",
+        "descKey": "Force GPU to render smoother edges for games.",
+        "command": "setprop debug.hwui.force_msaa true && setprop debug.egl.force_msaa 1"
       }
     ]
   }

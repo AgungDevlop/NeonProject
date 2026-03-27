@@ -1,13 +1,14 @@
 {
-  "latestVersion": "1.4",
+  "latestVersion": "1.5",
   "releaseNotes": [
-    "Major UI Overhaul: Redesigned interface with a cleaner, more professional layout and a new bottom navigation bar.",
-    "Multi-Language Support: Added a language switcher for English and Indonesian in the header.",
-    "New 'Performance' & 'Network' Tabs: Reorganized tweaks into dedicated sections for easier access and better logic.",
-    "Real-time Network Monitoring: The new 'Network' tab includes a live ping tester to monitor latency.",
-    "Enhanced Safety: Removed potentially risky tweaks (e.g., Disable Thermal Throttling) to ensure device safety.",
-    "Streamlined Interface: Moved 'Custom Module/Command' from the main tab to a settings modal for a cleaner look.",
-    "Improved Download Visuals: Replaced the old progress bar with a new circular progress indicator for downloads."
+    "Final Enterprise Update: Maxed out all Non-Root ADB tuning potential.",
+    "Fix Refresh Rate Display: Implemented Developer Settings bypass combined with SurfaceFlinger parcel calls to force overlay across all Android 11+ OEM devices.",
+    "New 'Game Driver Opt-In' Toggle: Force the Android graphics engine to deploy native Game Drivers globally.",
+    "New 'Disable Untrusted Touches' Toggle: Fixes the notorious input delay/touch blocking when overlay apps (like Discord/Messenger bubbles) are active.",
+    "New 'AFK Cafe Mode' Toggle: Allow infinite screen timeout (up to 24 Days) for heavy auto-grinding games.",
+    "New 'Optimize HWUI Overdraw': Command the GPU to ignore rendering dirty and hidden regions, slashing thermal buildup and boosting raw FPS.",
+    "Network Scoring Override: Disabled background network evaluation to stop Android from randomly scanning and rating Wi-Fi bands mid-game.",
+    "Ultimate Game Booster Finalized: The full boost script is now the most aggressive and safest execution pipeline available for non-root users."
   ],
   "downloadUrl": "https://neonmagisk.my.id"
 }

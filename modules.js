@@ -38,19 +38,32 @@ function renderFpsModules(modules) {
     container.innerHTML = "";
     modules.filter(m => m.name !== "Stop Module").forEach(module => {
         const item = document.createElement("div");
-        item.className = "radio-item";
-        item.innerHTML = `<input type="radio" id="fps-${module.name.replace(/\s+/g, '-')}" name="fps-group" value="${module.name}" ${activeModules.has(module.name) ? 'checked' : ''}><label for="fps-${module.name.replace(/\s+/g, '-')}"><span class="flex-grow">${module.name}</span></label>`;
+        item.className = "flex items-center justify-between hover:bg-white/[0.02] p-1 rounded-sm";
+        item.innerHTML = `<label for="fps-${module.name.replace(/\s+/g, '-')}"><span class="text-[10px] font-bold text-gray-200 uppercase tracking-widest">${module.name}</span></label><label class="relative"><input type="checkbox" class="sr-only peer" id="fps-${module.name.replace(/\s+/g, '-')}" value="${module.name}" ${activeModules.has(module.name) ? 'checked' : ''}><div class="hw-switch"></div></label>`;
         container.appendChild(item);
     });
+    
     container.addEventListener('change', (e) => {
-        if (e.target.type === 'radio') {
+        if (e.target.type === 'checkbox') {
             const selectedName = e.target.value;
+            const isChecked = e.target.checked;
             const module = allFpsModules.find(m => m.name === selectedName);
+            
             if (module) {
-                allFpsModules.forEach(m => activeModules.delete(m.name));
-                activeModules.add(selectedName);
-                localStorage.setItem("activeModules", JSON.stringify([...activeModules]));
-                handleModuleAction(selectedName, module.url);
+                if (isChecked) {
+                    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        if (cb !== e.target) cb.checked = false;
+                    });
+                    allFpsModules.forEach(m => activeModules.delete(m.name));
+                    activeModules.add(selectedName);
+                    localStorage.setItem("activeModules", JSON.stringify([...activeModules]));
+                    handleModuleAction(selectedName, module.url);
+                } else {
+                    activeModules.delete(selectedName);
+                    localStorage.setItem("activeModules", JSON.stringify([...activeModules]));
+                    const stopModule = allFpsModules.find(m => m.name === "Stop Module");
+                    if (stopModule) handleModuleAction(stopModule.name, stopModule.url);
+                }
             }
         }
     });
@@ -61,19 +74,32 @@ function renderFakeDevices(devices) {
     container.innerHTML = "";
     devices.filter(d => d.name !== "Restore Device").forEach(device => {
         const item = document.createElement("div");
-        item.className = "radio-item";
-        item.innerHTML = `<input type="radio" id="device-${device.name.replace(/\s+/g, '-')}" name="device-group" value="${device.name}" ${activeFakeDevices.has(device.name) ? 'checked' : ''}><label for="device-${device.name.replace(/\s+/g, '-')}"><span class="flex-grow">${device.name}</span></label>`;
+        item.className = "flex items-center justify-between hover:bg-white/[0.02] p-1 rounded-sm";
+        item.innerHTML = `<label for="device-${device.name.replace(/\s+/g, '-')}"><span class="text-[10px] font-bold text-gray-200 uppercase tracking-widest">${device.name}</span></label><label class="relative"><input type="checkbox" class="sr-only peer" id="device-${device.name.replace(/\s+/g, '-')}" value="${device.name}" ${activeFakeDevices.has(device.name) ? 'checked' : ''}><div class="hw-switch"></div></label>`;
         container.appendChild(item);
     });
+    
     container.addEventListener('change', (e) => {
-        if (e.target.type === 'radio') {
+        if (e.target.type === 'checkbox') {
             const selectedName = e.target.value;
+            const isChecked = e.target.checked;
             const device = allFakeDevices.find(d => d.name === selectedName);
+            
             if (device) {
-                activeFakeDevices.clear();
-                activeFakeDevices.add(selectedName);
-                localStorage.setItem("activeFakeDevices", JSON.stringify([...activeFakeDevices]));
-                handleFakeDeviceAction(selectedName, device.url);
+                if (isChecked) {
+                    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        if (cb !== e.target) cb.checked = false;
+                    });
+                    activeFakeDevices.clear();
+                    activeFakeDevices.add(selectedName);
+                    localStorage.setItem("activeFakeDevices", JSON.stringify([...activeFakeDevices]));
+                    handleFakeDeviceAction(selectedName, device.url);
+                } else {
+                    activeFakeDevices.delete(selectedName);
+                    localStorage.setItem("activeFakeDevices", JSON.stringify([...activeFakeDevices]));
+                    const restoreDevice = allFakeDevices.find(d => d.name === "Restore Device");
+                    if (restoreDevice) handleFakeDeviceAction(restoreDevice.name, restoreDevice.url);
+                }
             }
         }
     });
