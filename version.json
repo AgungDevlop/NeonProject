@@ -1,15 +1,16 @@
 {
-  "latestVersion": "1.8",
+  "latestVersion": "1.9",
   "releaseNotes": [
+    "Neon Remote Engine Integration: Added high-performance, real-time Screen Mirroring with adaptive bitrate and smooth buffer management.",
+    "Seamless Remote Access: Implemented stable 3-Way SSH Tunneling (Serveo) for reliable and high-speed remote connections.",
+    "Enterprise File Manager: Advanced storage management with Scoped Storage (OBB/Data) support, integrated Code Editor, and native ZIP archive handling.",
+    "Live Interactive Terminal: Added a professional web-based command-line interface with real-time logging and system control.",
+    "Web Panel UI Redesign: Upgraded repository interface with a modern Cyberpunk theme, Live Search functionality, and interactive detail popups.",
     "Terminal Engine Update: Full support for both Shizuku and iAdb elevated privileges.",
-    "Final Enterprise Update: Maxed out all Non-Root ADB tuning potential.",
     "Fix Refresh Rate Display: Implemented Developer Settings bypass combined with SurfaceFlinger parcel calls to force overlay across all Android 11+ OEM devices.",
     "New 'Game Driver Opt-In' Toggle: Force the Android graphics engine to deploy native Game Drivers globally.",
     "New 'Disable Untrusted Touches' Toggle: Fixes the notorious input delay/touch blocking when overlay apps (like Discord/Messenger bubbles) are active.",
-    "New 'AFK Cafe Mode' Toggle: Allow infinite screen timeout (up to 24 Days) for heavy auto-grinding games.",
-    "New 'Optimize HWUI Overdraw': Command the GPU to ignore rendering dirty and hidden regions, slashing thermal buildup and boosting raw FPS.",
-    "Network Scoring Override: Disabled background network evaluation to stop Android from randomly scanning and rating Wi-Fi bands mid-game.",
-    "Ultimate Game Booster Finalized: The full boost script is now the most aggressive and safest execution pipeline available for non-root users."
+    "New 'AFK Cafe Mode' Toggle: Allow infinite screen timeout (up to 24 Days) for heavy auto-grinding games."
   ],
   "downloadUrl": "https://neonmagisk.my.id"
 }
