@@ -1,5 +1,5 @@
 {
-  "latestVersion": "1.9",
+  "latestVersion": "2.0",
   "releaseNotes": [
     "Neon Remote Engine Integration: Added high-performance, real-time Screen Mirroring with adaptive bitrate and smooth buffer management.",
     "Seamless Remote Access: Implemented stable 3-Way SSH Tunneling (Serveo) for reliable and high-speed remote connections.",
