@@ -1,16 +1,10 @@
 {
-  "latestVersion": "2.0",
+  "latestVersion": "2.1",
   "releaseNotes": [
-    "Neon Remote Engine Integration: Added high-performance, real-time Screen Mirroring with adaptive bitrate and smooth buffer management.",
-    "Seamless Remote Access: Implemented stable 3-Way SSH Tunneling (Serveo) for reliable and high-speed remote connections.",
-    "Enterprise File Manager: Advanced storage management with Scoped Storage (OBB/Data) support, integrated Code Editor, and native ZIP archive handling.",
-    "Live Interactive Terminal: Added a professional web-based command-line interface with real-time logging and system control.",
-    "Web Panel UI Redesign: Upgraded repository interface with a modern Cyberpunk theme, Live Search functionality, and interactive detail popups.",
-    "Terminal Engine Update: Full support for both Shizuku and iAdb elevated privileges.",
-    "Fix Refresh Rate Display: Implemented Developer Settings bypass combined with SurfaceFlinger parcel calls to force overlay across all Android 11+ OEM devices.",
-    "New 'Game Driver Opt-In' Toggle: Force the Android graphics engine to deploy native Game Drivers globally.",
-    "New 'Disable Untrusted Touches' Toggle: Fixes the notorious input delay/touch blocking when overlay apps (like Discord/Messenger bubbles) are active.",
-    "New 'AFK Cafe Mode' Toggle: Allow infinite screen timeout (up to 24 Days) for heavy auto-grinding games."
+    "Seamless Gaming Experience: Intrusive system overlays and default Game Booster interruptions have been completely eliminated, ensuring a pure and immersive gaming session.",
+    "Instant HUD Deployment: The Floating Control Panel now launches flawlessly in the blink of an eye on all Android versions, requiring zero manual permission setups from the user.",
+    "Maximum Device Compatibility: Heavily optimized to run perfectly on all smartphones, including entry-level devices. Enjoy ultra-fast transitions back to your game without annoying app reloads or lag.",
+    "Bulletproof Stability: Resolved startup glitches and storage reading errors. The Neon Engine now guarantees a 100% stable and secure boot every time you tap the Quick Setting Tile."
   ],
   "downloadUrl": "https://neonmagisk.my.id"
 }
