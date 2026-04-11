@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function setupEventListeners() {
-    // Listener untuk Radio Buttons (Renderer, DNS, Network)
     const setupTweakRadioListener = (containerId, name) => { 
         const container = document.getElementById(containerId);
         if (container) {
@@ -53,25 +52,21 @@ function setupEventListeners() {
         }
     };
 
-    // Header & Modal Controls
     document.getElementById("translate-btn-icon")?.addEventListener("click", () => getAlpine().activeModal = 'translate');
     document.getElementById("settings-btn-icon")?.addEventListener("click", () => getAlpine().activeModal = 'custom');
     document.getElementById("lang-id-btn")?.addEventListener("click", () => setLanguage('id'));
     document.getElementById("lang-en-btn")?.addEventListener("click", () => setLanguage('en'));
 
-    // Inisialisasi Radio Listeners
     setupTweakRadioListener('renderer-options', 'renderer');
     setupTweakRadioListener('network-profile-options', 'network_profile');
     setupTweakRadioListener('dns-options-container', 'dns');
 
-    // JIT Speed Profile Button
     document.getElementById("apply-jit-speed-btn")?.addEventListener("click", () => {
         if (COMMANDS.jit_speed_profile) {
             runCommandFlow(COMMANDS.jit_speed_profile, getLangString('perf_jit_speed'));
         }
     });
 
-    // Targeted Hooks (Per App Tweaks)
     const applyPerAppTweak = (commandKey, moduleName) => {
         const pkgInput = document.getElementById("package-name-input");
         const packageName = pkgInput.value.trim();
@@ -86,7 +81,6 @@ function setupEventListeners() {
     document.getElementById("apply-angle-btn")?.addEventListener("click", () => applyPerAppTweak('force_angle_for_app', getLangString('tweaks_angle')));
     document.getElementById("apply-updatable-driver-btn")?.addEventListener("click", () => applyPerAppTweak('force_updatable_driver_for_app', getLangString('tweaks_updatable_driver')));
 
-    // DPI Controls
     document.getElementById("set-dpi-btn")?.addEventListener("click", () => { 
         const dpi = document.getElementById("dpi-input").value; 
         if (!dpi) return; 
@@ -99,7 +93,6 @@ function setupEventListeners() {
         runTweakFlow(COMMANDS.reset_dpi, getLangString('tweaks_dpi_label')); 
     });
 
-    // Maintenance & Utility Commands
     const setupUtilityButton = (btnId, commandKey, langKey) => {
         const btn = document.getElementById(btnId);
         if (btn) {
@@ -118,7 +111,6 @@ function setupEventListeners() {
     setupUtilityButton('fstrim-btn', 'fstrim_command', 'tweaks_fstrim');
     setupUtilityButton('dex-compile-btn', 'force_dex_compile', 'tweaks_dex_compile');
 
-    // Factory Reset Tweaks
     document.getElementById("restore-tweaks-btn")?.addEventListener("click", async () => { 
         if (await getAlpine().showConfirm(getLangString("notification_confirm_restore_tweaks"))) { 
             runTweakFlow(Object.values(RESTORE_COMMANDS).join(' && '), getLangString("tweaks_restore_all_btn")); 
@@ -127,7 +119,6 @@ function setupEventListeners() {
         } 
     });
 
-    // Custom Module & Remote Shell
     document.getElementById("custom-module-btn")?.addEventListener("click", (e) => { 
         if (e.currentTarget.textContent === getLangString('custom_module_select_btn')) document.getElementById("custom-module-input").click(); 
         else if(typeof handleCustomModule === 'function') handleCustomModule(); 
@@ -141,7 +132,6 @@ function setupEventListeners() {
     document.getElementById("run-custom-command-btn")?.addEventListener("click", () => { if(typeof handleCustomCommand === 'function') handleCustomCommand(); });
     document.getElementById("clear-logs-btn-custom")?.addEventListener("click", () => { if(typeof clearAllLogs === 'function') clearAllLogs(); });
 
-    // Restores for Spoof & Framerate
     document.getElementById("restore-device-btn")?.addEventListener("click", () => { 
         const module = allFakeDevices.find(d => d.name === "Restore Device"); 
         if(module && typeof handleRestore === 'function') handleRestore(module.name, module.url, activeFakeDevices, "activeFakeDevices", renderFakeDevices, allFakeDevices); 
@@ -151,24 +141,41 @@ function setupEventListeners() {
         if(module && typeof handleRestore === 'function') handleRestore(module.name, module.url, activeModules, "activeModules", renderFpsModules, allFpsModules); 
     });
     
-    // Game Management
     document.getElementById("scan-games-btn")?.addEventListener("click", () => { if(typeof scanInstalledGames === 'function') scanInstalledGames(); });
     document.getElementById("restore-game-settings-btn")?.addEventListener("click", () => { if(typeof restoreGameSettings === 'function') restoreGameSettings(); });
 
-    // Shizuku Controls
-    document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => { window.open('https://vt.tiktok.com/ZSAqLcegA/', '_blank'); });
+    document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => { window.open('https://vt.tiktok.com/ZSH4eTxc5/', '_blank'); });
+    
     document.getElementById('shizuku-recheck-btn')?.addEventListener('click', async () => {
         const btn = document.getElementById('shizuku-recheck-btn');
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Checking...`; btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Checking...`; 
+        btn.disabled = true;
         const shizukuOkNow = await checkShizukuStatus();
         if (shizukuOkNow) {
-            getAlpine().activeModal = ''; getAlpine().showNotification(getLangString('notification_shizuku_connected'));
+            getAlpine().activeModal = window.pendingUpdate ? 'update' : ''; 
+            window.pendingUpdate = false;
+            getAlpine().showNotification(getLangString('notification_shizuku_connected'));
             await initializeAppFeatures();
         } else {
             getAlpine().showNotification(getLangString('notification_shizuku_still_not_running'));
             btn.innerHTML = `<i class="fas fa-sync-alt mr-2"></i><span data-lang-key="modal_shizuku_recheck_btn"></span>`;
             translateUI();
             btn.disabled = false;
+            
+            if (window.Android && window.Android.openInChrome) {
+                window.Android.openInChrome('https://play.google.com/store/apps/details?id=com.iadb.helper');
+            } else {
+                window.open('https://play.google.com/store/apps/details?id=com.iadb.helper', '_blank');
+            }
+        }
+    });
+
+    document.getElementById('shizuku-later-btn')?.addEventListener('click', () => {
+        if (window.pendingUpdate) {
+            getAlpine().activeModal = 'update';
+            window.pendingUpdate = false;
+        } else {
+            getAlpine().activeModal = '';
         }
     });
 }

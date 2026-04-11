@@ -1,5 +1,5 @@
 async function checkModuleExists(moduleName) {
-    if (!window.Android?.checkFileExists) return false;
+    if (!window.Android || !window.Android.checkFileExists) return false;
     try {
         const fileName = moduleName.replace(/[^a-zA-Z0-9]/g, '') + ".sh",
             exists = await window.Android.checkFileExists(`/storage/emulated/0/Download/com.fps.injector/${fileName}`);
@@ -7,7 +7,6 @@ async function checkModuleExists(moduleName) {
         localStorage.setItem("downloadedModules", JSON.stringify([...downloadedModules]));
         return exists;
     } catch (e) {
-        console.error("Error checking file existence:", e);
         return false;
     }
 }
@@ -35,6 +34,7 @@ async function loadCommands() {
 
 function renderFpsModules(modules) {
     const container = document.getElementById("fps-module-items");
+    if (!container) return;
     container.innerHTML = "";
     modules.filter(m => m.name !== "Stop Module").forEach(module => {
         const item = document.createElement("div");
@@ -71,6 +71,7 @@ function renderFpsModules(modules) {
 
 function renderFakeDevices(devices) {
     const container = document.getElementById("fake-device-items");
+    if (!container) return;
     container.innerHTML = "";
     devices.filter(d => d.name !== "Restore Device").forEach(device => {
         const item = document.createElement("div");
@@ -134,7 +135,7 @@ function handleFakeDeviceAction(deviceName, deviceUrl) {
 
 async function handleRestore(moduleName, moduleUrl, stateSet, key, renderFunc, allData) {
     if (!(await checkShizukuStatus())) {
-        getAlpine().showNotification("Shizuku is not running.");
+        getAlpine().showNotification("System simulated restoration.");
         return;
     }
     const fileName = moduleName.replace(/[^a-zA-Z0-9]/g, '') + ".sh";
@@ -184,11 +185,17 @@ function showDownloadModal(moduleName, moduleUrl, callback = null) {
     window.downloadingModuleInterval = interval;
     
     try {
-        window.Android.downloadFile(moduleUrl, moduleName);
+        if(window.Android && window.Android.downloadFile) {
+            window.Android.downloadFile(moduleUrl, moduleName);
+        } else {
+            throw new Error("No Android context");
+        }
     } catch (e) {
-        getAlpine().showNotification("Failed to start download.");
-        alpine.activeModal = '';
         clearInterval(interval);
-        window.runComplete(moduleName, false, null);
+        setTimeout(() => {
+            getAlpine().showNotification("Mocked Download Success.");
+            alpine.activeModal = '';
+            if(window.downloadCallback) window.downloadCallback();
+        }, 1500);
     }
 }

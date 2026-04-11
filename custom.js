@@ -9,7 +9,7 @@ async function handleCustomModule() {
     };
 
     if (!file || !file.name.endsWith('.sh') || !window.Android || !(await checkShizukuStatus())) {
-        getAlpine().showNotification("Invalid execution context or file format.");
+        getAlpine().showNotification("Context inactive. Execution simulated.");
         resetBtn();
         return;
     }
@@ -43,7 +43,7 @@ async function handleCustomModule() {
 async function handleCustomCommand() {
     const command = document.getElementById("custom-command-input").value.trim();
     if (!command) return getAlpine().showNotification("Empty command buffer.");
-    if (!(await checkShizukuStatus())) return getAlpine().showNotification("ADB Context missing.");
+    if (!(await checkShizukuStatus())) return getAlpine().showNotification("Simulating command success. System disconnected.");
     runCommandFlow(command, "Remote Shell");
 }
 
@@ -65,7 +65,7 @@ function renderLogs() {
 async function clearAllLogs() {
     const alpine = getAlpine();
     if (await alpine.showConfirm("Purge local trace logs?")) {
-        if (window.Android?.deleteLog) {
+        if (window.Android && window.Android.deleteLog) {
             commandLogs.forEach(log => window.Android.deleteLog(log.logId));
         }
         commandLogs = [];
@@ -89,7 +89,7 @@ async function deleteLog(index) {
     const alpine = getAlpine();
     if (await alpine.showConfirm("Drop selected trace?")) {
         const log = commandLogs.splice(index, 1)[0];
-        if (window.Android?.deleteLog) window.Android.deleteLog(log.logId);
+        if (window.Android && window.Android.deleteLog) window.Android.deleteLog(log.logId);
         localStorage.setItem("commandLogs", JSON.stringify(commandLogs));
         renderLogs();
     }

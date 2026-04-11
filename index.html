@@ -470,7 +470,7 @@
                 <a href="#" class="btn-press flex items-center gap-3 px-3 py-3 rounded-sm hover:bg-sysBorderDark text-gray-300 font-bold text-xs font-mono tracking-wide">
                     <i class="fas fa-star text-gray-500 w-4 text-center"></i><span>Rate App</span>
                 </a>
-                <a href="database.html" class="btn-press flex items-center gap-3 px-3 py-3 rounded-sm hover:bg-sysBorderDark text-gray-300 font-bold text-xs font-mono tracking-wide">
+                <a href="https://neonmagisk.my.id/tweak/" class="btn-press flex items-center gap-3 px-3 py-3 rounded-sm hover:bg-sysBorderDark text-gray-300 font-bold text-xs font-mono tracking-wide">
                     <i class="fas fa-database text-gray-500 w-4 text-center"></i><span>Database</span>
                 </a>
                 <div class="py-2"><div class="h-px bg-sysBorder w-full"></div></div>
@@ -485,7 +485,7 @@
             <div class="p-5 bg-black border-t border-sysBorder text-center pb-8">
                 <div class="flex justify-center gap-6 text-lg mb-1">
                     <a href="https://youtube.com/@neoninjectofficial?si=2JZi-XH7MyGX9xBX" class="text-gray-600 hover:text-red-500 transition-colors" target="_blank"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.tiktok.com/@neoninject?_t=ZS-8y7bsj0p15I&_r=1" class="text-gray-600 hover:text-white transition-colors" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://tiktok.com/@neonmagisk" class="text-gray-600 hover:text-white transition-colors" target="_blank"><i class="fab fa-tiktok"></i></a>
                     <a href="https://www.instagram.com/agungeka_22?igsh=dmo4YnR4dTF3cnhq" class="text-gray-600 hover:text-white transition-colors" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="https://agungwandev.com" class="text-gray-600 hover:text-white transition-colors" target="_blank"><i class="fas fa-globe"></i></a>
                 </div>
@@ -508,6 +508,9 @@
                         </button>
                         <button id="shizuku-tutorial-btn" class="btn-press w-full py-2.5 bg-[#1a0a0a] border border-sysBorder text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
                             <i class="fab fa-tiktok mr-2"></i><span data-lang-key="modal_shizuku_tutorial_btn">Watch Tutorial</span>
+                        </button>
+                        <button id="shizuku-later-btn" class="btn-press w-full py-2.5 bg-transparent border border-sysBorder text-gray-500 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
+                            <i class="fas fa-times mr-2"></i><span data-lang-key="modal_shizuku_later_btn">Later</span>
                         </button>
                     </div>
                 </div>
@@ -547,7 +550,10 @@
                         <p class="text-[9px] text-gray-500 font-mono mt-1"><span data-lang-key="modal_update_desc">Target:</span> <strong id="update-version" class="text-accentRed">...</strong></p>
                     </div>
                     <div id="update-notes" class="bg-black border border-sysBorder p-3 rounded-sm text-[9px] text-gray-400 mb-4 max-h-32 overflow-y-auto content-scroll font-mono whitespace-pre-wrap"></div>
-                    <a id="update-link" href="#" class="btn-press block w-full py-2.5 bg-accentRed text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] text-center border border-red-500" data-lang-key="modal_update_btn">Flash OTA</a>
+                    <div class="space-y-2">
+                        <a id="update-link" href="#" class="btn-press block w-full py-2.5 bg-accentRed text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] text-center border border-red-500" data-lang-key="modal_update_btn">Flash OTA</a>
+                        <button @click="activeModal = ''" class="btn-press w-full py-2.5 bg-transparent border border-sysBorder text-gray-500 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]" data-lang-key="modal_update_later_btn">Later</button>
+                    </div>
                 </div>
 
                 <div x-show="activeModal === 'dnsWarning'" class="text-center">

@@ -4,7 +4,6 @@ async function loadAppVersion() {
         document.getElementById("app-version").textContent = `Version: ${version || 'Unknown'}`;
         return version;
     } catch (e) {
-        console.error("Error loading app version:", e);
         document.getElementById("app-version").textContent = "Version: Error";
         return "0.0.0";
     }
@@ -25,7 +24,7 @@ function compareVersions(v1, v2) {
 async function checkForUpdates() {
     try {
         const localVersion = await loadAppVersion();
-        if (localVersion === "0.0.0") return;
+        if (localVersion === "0.0.0") return false;
         const response = await fetch(VERSION_URL, { cache: "no-store" });
         const data = await response.json();
         
@@ -37,12 +36,10 @@ async function checkForUpdates() {
             
             document.getElementById('update-link').href = data.downloadUrl;
             
-            // This ensures the static text parts are translated
             translateUI(); 
 
-            getAlpine().activeModal = 'update';
+            return true;
         }
-    } catch (e) {
-        console.error("Update check failed:", e);
-    }
+    } catch (e) {}
+    return false;
 }
