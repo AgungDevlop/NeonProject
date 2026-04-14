@@ -3,8 +3,21 @@ async function initializeAppFeatures() {
     await initializeDashboard(); 
 }
 
+const checkStatusAndInit = async () => {
+    if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+        const shizukuOk = await window.Android.getShizukuStatus();
+        if (shizukuOk) {
+            getAlpine().activeModal = '';
+            await initializeAppFeatures();
+        } else {
+            getAlpine().activeModal = 'shizukuRequired';
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        await checkStatusAndInit();
         await loadLanguages();
         await loadCommands(); 
         if (typeof loadTweakSettings === 'function') loadTweakSettings();
@@ -22,18 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof initializeNetworkTab === 'function') initializeNetworkTab();
         if (typeof initializeDiagnosisChart === 'function') initializeDiagnosisChart(); 
         if (typeof initializeBuilder === 'function') initializeBuilder();
-
-        if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
-            const shizukuOk = await window.Android.getShizukuStatus();
-            if (shizukuOk) { 
-                getAlpine().activeModal = '';
-                await initializeAppFeatures();
-            } else {
-                getAlpine().activeModal = 'shizukuRequired';
-            }
-        } else {
-            getAlpine().activeModal = 'shizukuRequired';
-        }
     } catch (error) { 
         getAlpine().showNotification("App failed to initialize properly."); 
     }
@@ -170,8 +171,7 @@ function setupEventListeners() {
     document.getElementById("scan-games-btn")?.addEventListener("click", () => { if(typeof scanInstalledGames === 'function') scanInstalledGames(); });
     document.getElementById("restore-game-settings-btn")?.addEventListener("click", () => { if(typeof restoreGameSettings === 'function') restoreGameSettings(); });
 
-    document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => { window.open('https://vt.tiktok.com/ZSH4eTxc5/', '_blank'); });
-
+    // UI Handler Mode Abadi
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
     let adbAutoCloseInterval = null;
