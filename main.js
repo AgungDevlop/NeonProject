@@ -164,7 +164,7 @@ function setupEventListeners() {
     let adbAutoCloseInterval = null;
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
-        if (uiNativeAdb) uiNativeAdb.style.display = 'block';
+        if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
         if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
@@ -183,7 +183,7 @@ function setupEventListeners() {
         }, 2000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
-        if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'block';
+        if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
         if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
     }
 
@@ -194,7 +194,7 @@ function setupEventListeners() {
     });
 
     document.getElementById('adb-tutorial-btn')?.addEventListener('click', () => {
-        const tutorialUrl = 'https://neonproject.my.id/tutorial'; 
+        const tutorialUrl = 'https://vt.tiktok.com/ZSHpGtANm/'; 
         if (window.Android && typeof window.Android.openInChrome === 'function') {
             window.Android.openInChrome(tutorialUrl);
         } else {
@@ -204,14 +204,15 @@ function setupEventListeners() {
 
     document.getElementById('shizuku-open-btn')?.addEventListener('click', () => {
         if (window.Android && typeof window.Android.openInChrome === 'function') {
-            window.Android.openInChrome('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api');
+            window.Android.openInChrome('https://play.google.com/store/apps/details?id=com.iadb.helper');
         } else {
-            window.open('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api', '_blank');
+            window.open('https://play.google.com/store/apps/details?id=com.iadb.helper', '_blank');
         }
     });
 
     document.getElementById('shizuku-recheck-btn')?.addEventListener('click', async () => {
         const btn = document.getElementById('shizuku-recheck-btn');
+        if (!btn) return;
         const originalHtml = btn.innerHTML;
         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>CHECKING...`;
         btn.disabled = true;
@@ -234,6 +235,7 @@ function setupEventListeners() {
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     });
+
 
 
     document.getElementById('shizuku-later-btn')?.addEventListener('click', () => {

@@ -498,9 +498,9 @@
             
             <div class="p-5 overflow-y-auto content-scroll">
                 
-                <div x-show="activeModal === 'shizukuRequired'" class="relative flex flex-col items-center p-2">
+                <div x-show="activeModal === 'shizukuRequired'" class="relative flex flex-col items-center w-full px-2">
                     
-                    <div id="ui-native-adb" style="display: none;" class="w-full">
+                    <div id="ui-native-adb" style="display: none;" class="w-full flex-col items-center">
                         <div class="relative w-20 h-20 mx-auto mb-5 flex items-center justify-center">
                             <div class="absolute inset-0 border-t-2 border-l-2 border-blue-500 rounded-full animate-[spin_2s_linear_infinite] opacity-70"></div>
                             <div class="absolute inset-0 border-b-2 border-r-2 border-cyan-400 rounded-full animate-[spin_3s_linear_infinite_reverse] opacity-70"></div>
@@ -510,25 +510,26 @@
                         <h2 class="text-[14px] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-2 uppercase font-mono tracking-[0.25em] text-center drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">ENGINE OFFLINE</h2>
                         <p class="text-[10px] text-gray-400 mb-6 font-mono text-center leading-relaxed px-4">Akses Wireless Debugging diperlukan. Lakukan Pairing untuk menginisialisasi daemon lokal.</p>
 
-                        <button id="adb-pair-btn" class="btn-press relative w-full py-3.5 bg-blue-600/20 hover:bg-blue-600/40 text-cyan-300 font-bold font-mono tracking-[0.2em] uppercase rounded-md text-[11px] border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)] mb-3 transition-all">
+                        <button id="adb-pair-btn" class="btn-press w-full py-3.5 bg-blue-600/20 hover:bg-blue-600/40 text-cyan-300 font-bold font-mono tracking-[0.2em] uppercase rounded-md text-[11px] border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)] mb-3 transition-all">
                             <i class="fas fa-satellite-dish mr-2 animate-pulse"></i> ENGAGE PAIRING
                         </button>
-                        <button id="adb-tutorial-btn" class="btn-press w-full py-3 bg-[#0a0a0c] text-gray-400 hover:text-cyan-400 font-bold font-mono tracking-widest uppercase rounded-md text-[10px] border border-gray-800 hover:border-cyan-500/30 transition-all">
-                            <i class="fas fa-book mr-2"></i> READ GUIDE
+                        <button id="adb-tutorial-btn" class="btn-press w-full py-3 bg-[#0a0a0c] text-gray-400 hover:text-cyan-400 font-bold font-mono tracking-widest uppercase rounded-md text-[10px] border border-gray-800 hover:border-cyan-500/30 transition-all mb-2">
+                            <i class="fab fa-tiktok mr-2"></i> VIDEO TUTORIAL
                         </button>
                     </div>
 
-                    <div id="ui-legacy-shizuku" style="display: block;" class="w-full">
-                        <div class="mb-4 flex justify-center">
-                            <i class="fas fa-exclamation-triangle text-5xl text-yellow-500 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)] animate-pulse"></i>
+                    <div id="ui-legacy-shizuku" style="display: block;" class="w-full flex-col items-center">
+                        <div class="mb-5 flex justify-center relative w-20 h-20 mx-auto items-center">
+                            <div class="absolute inset-0 bg-yellow-500/20 rounded-full blur-xl animate-pulse"></div>
+                            <i class="fas fa-exclamation-triangle text-5xl text-yellow-500 drop-shadow-[0_0_12px_rgba(234,179,8,0.8)] relative z-10"></i>
                         </div>
-                        <h2 class="text-[13px] font-extrabold text-white mb-2 uppercase font-mono tracking-[0.2em] text-center">TERMINAL OFFLINE</h2>
-                        <p class="text-[10px] text-gray-400 mb-6 font-mono leading-relaxed px-2 text-center">Terminal belum terhubung. Pastikan Shizuku atau iAdb berjalan di latar belakang.</p>
+                        <h2 class="text-[14px] font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-2 uppercase font-mono tracking-[0.25em] text-center drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">TERMINAL OFFLINE</h2>
+                        <p class="text-[10px] text-gray-400 mb-6 font-mono text-center leading-relaxed px-4">Terminal belum terhubung. Pastikan aplikasi Shizuku atau iAdb berjalan di latar belakang.</p>
                         
-                        <button id="shizuku-open-btn" class="btn-press w-full py-3 bg-yellow-600/20 hover:bg-yellow-600/40 text-yellow-500 font-bold font-mono tracking-widest uppercase rounded-md text-[10px] border border-yellow-500/50 mb-3 shadow-[0_0_15px_rgba(202,138,4,0.2)] transition-all">
-                            <i class="fas fa-external-link-alt mr-2"></i> BUKA TERMINAL
+                        <button id="shizuku-open-btn" class="btn-press w-full py-3.5 bg-yellow-600/20 hover:bg-yellow-600/40 text-yellow-500 font-bold font-mono tracking-[0.15em] uppercase rounded-md text-[11px] border border-yellow-500/50 mb-3 shadow-[0_0_15px_rgba(202,138,4,0.2)] transition-all">
+                            <i class="fas fa-external-link-alt mr-2"></i> BUKA SHIZUKU
                         </button>
-                        <button id="shizuku-recheck-btn" class="btn-press w-full py-3 bg-[#0a0a0c] text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-md text-[10px] border border-gray-800 transition-all">
+                        <button id="shizuku-recheck-btn" class="btn-press w-full py-3 bg-[#0a0a0c] text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-md text-[10px] border border-gray-800 hover:border-gray-600 transition-all mb-2">
                             <i class="fas fa-sync-alt mr-2"></i> RECHECK STATUS
                         </button>
                     </div>
@@ -537,8 +538,6 @@
                         DISMISS
                     </button>
                 </div>
-
-
 
 
 
