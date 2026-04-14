@@ -146,30 +146,6 @@ function setupEventListeners() {
 
     document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => { window.open('https://vt.tiktok.com/ZSH4eTxc5/', '_blank'); });
     
-    document.getElementById('shizuku-recheck-btn')?.addEventListener('click', async () => {
-        const btn = document.getElementById('shizuku-recheck-btn');
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Checking...`; 
-        btn.disabled = true;
-        const shizukuOkNow = await checkShizukuStatus();
-        if (shizukuOkNow) {
-            getAlpine().activeModal = window.pendingUpdate ? 'update' : ''; 
-            window.pendingUpdate = false;
-            getAlpine().showNotification(getLangString('notification_shizuku_connected'));
-            await initializeAppFeatures();
-        } else {
-            getAlpine().showNotification(getLangString('notification_shizuku_still_not_running'));
-            btn.innerHTML = `<i class="fas fa-sync-alt mr-2"></i><span data-lang-key="modal_shizuku_recheck_btn"></span>`;
-            translateUI();
-            btn.disabled = false;
-            
-            if (window.Android && window.Android.openInChrome) {
-                window.Android.openInChrome('https://play.google.com/store/apps/details?id=com.iadb.helper');
-            } else {
-                window.open('https://play.google.com/store/apps/details?id=com.iadb.helper', '_blank');
-            }
-        }
-    });
-
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
 
@@ -187,6 +163,15 @@ function setupEventListeners() {
         }
     });
 
+    document.getElementById('adb-tutorial-btn')?.addEventListener('click', () => {
+        const tutorialUrl = 'https://vt.tiktok.com/ZSHpqFHHA/'; 
+        if (window.Android && typeof window.Android.openInChrome === 'function') {
+            window.Android.openInChrome(tutorialUrl);
+        } else {
+            window.open(tutorialUrl, '_blank');
+        }
+    });
+
     document.getElementById('shizuku-open-btn')?.addEventListener('click', () => {
         if (window.Android && typeof window.Android.openInChrome === 'function') {
             window.Android.openInChrome('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api');
@@ -194,6 +179,8 @@ function setupEventListeners() {
             window.open('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api', '_blank');
         }
     });
+
+
 
 
 

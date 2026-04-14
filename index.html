@@ -498,35 +498,45 @@
             
             <div class="p-5 overflow-y-auto content-scroll">
                 
-                <div x-show="activeModal === 'shizukuRequired'" class="text-center">
+                <div x-show="activeModal === 'shizukuRequired'" class="text-center relative">
                     
                     <div id="ui-native-adb" style="display: none;">
-                        <i class="fas fa-wifi text-4xl text-blue-500 mb-4"></i>
-                        <h2 class="text-[11px] font-bold text-gray-200 mb-2 uppercase font-mono tracking-widest">ENGINE OFFLINE</h2>
-                        <p class="text-[10px] text-gray-400 mb-6 font-mono">Background Engine membutuhkan Wireless Debugging. Aktifkan di Opsi Pengembang dan lakukan Pairing.</p>
-                        <button id="adb-pair-btn" class="btn-press w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] mb-3 border border-blue-500/50">
-                            <i class="fas fa-link mr-2"></i><span>PAIR DEVICE</span>
-                        </button>
+                        <div class="mb-4 relative flex justify-center">
+                            <div class="absolute inset-0 bg-blue-500 blur-xl opacity-20 rounded-full animate-pulse w-16 h-16 m-auto"></div>
+                            <i class="fas fa-satellite-dish text-4xl text-blue-400 relative z-10 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]"></i>
+                        </div>
+                        <h2 class="text-[13px] font-extrabold text-white mb-2 uppercase font-mono tracking-[0.2em] drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">SYSTEM OFFLINE</h2>
+                        <p class="text-[10px] text-gray-400 mb-5 font-mono leading-relaxed px-2">Background Engine membutuhkan akses Wireless Debugging. Aktifkan di setelan pengembang dan lakukan Pairing.</p>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <button id="adb-pair-btn" class="btn-press py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                                <i class="fas fa-link mb-1 block text-[14px]"></i> PAIR
+                            </button>
+                            <button id="adb-tutorial-btn" class="btn-press py-3 bg-[#0f172a] hover:bg-[#1e293b] text-blue-400 font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-blue-500/50">
+                                <i class="fas fa-book mb-1 block text-[14px]"></i> GUIDE
+                            </button>
+                        </div>
                     </div>
 
                     <div id="ui-legacy-shizuku" style="display: block;">
-                        <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
-                        <h2 class="text-[11px] font-bold text-gray-200 mb-2 uppercase font-mono tracking-widest">SHIZUKU OFFLINE</h2>
-                        <p class="text-[10px] text-gray-400 mb-6 font-mono">Terminal belum terhubung. Pastikan aplikasi Shizuku atau iAdb berjalan di latar belakang.</p>
-                        <button id="shizuku-open-btn" class="btn-press w-full py-2.5 bg-accentRedDark hover:bg-accentRed text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-accentRed/50 mb-3">
-                            <i class="fas fa-external-link-alt mr-2"></i><span>BUKA SHIZUKU</span>
+                        <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4 drop-shadow-[0_0_8px_rgba(234,179,8,0.6)]"></i>
+                        <h2 class="text-[13px] font-extrabold text-white mb-2 uppercase font-mono tracking-[0.2em]">TERMINAL OFFLINE</h2>
+                        <p class="text-[10px] text-gray-400 mb-5 font-mono leading-relaxed px-2">Terminal belum terhubung. Pastikan Shizuku atau iAdb berjalan di latar belakang.</p>
+                        <button id="shizuku-open-btn" class="btn-press w-full py-2.5 bg-yellow-600 hover:bg-yellow-500 text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-yellow-500/50 mb-4 shadow-[0_0_15px_rgba(202,138,4,0.3)]">
+                            <i class="fas fa-external-link-alt mr-2"></i> BUKA SHIZUKU
                         </button>
                     </div>
 
-                    <div class="space-y-3">
-                        <button id="shizuku-recheck-btn" class="btn-press w-full py-2.5 bg-[#1a0a0a] border border-sysBorder text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
-                            <i class="fas fa-sync-alt mr-2"></i><span>Recheck Status</span>
+                    <div class="space-y-2 pt-3 border-t border-gray-800/60">
+                        <button id="shizuku-recheck-btn" class="btn-press w-full py-2.5 bg-sysCard border border-sysBorder text-gray-300 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
+                            <i class="fas fa-sync-alt mr-2"></i> RECHECK STATUS
                         </button>
-                        <button @click="activeModal = ''" class="btn-press w-full py-2.5 bg-transparent border border-sysBorder text-gray-500 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
-                            <i class="fas fa-times mr-2"></i><span>Later</span>
+                        <button @click="activeModal = ''" class="btn-press w-full py-2 bg-transparent text-gray-600 hover:text-gray-400 font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
+                            DISMISS
                         </button>
                     </div>
                 </div>
+
 
 
 
