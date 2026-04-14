@@ -148,13 +148,30 @@ function setupEventListeners() {
     
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
+    let adbAutoCloseInterval = null;
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
         if (uiNativeAdb) uiNativeAdb.style.display = 'block';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
+
+        if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
+        adbAutoCloseInterval = setInterval(async () => {
+            if (getAlpine().activeModal === 'shizukuRequired') {
+                const isConnected = await window.Android.getShizukuStatus();
+                if (isConnected) {
+                    getAlpine().activeModal = '';
+                    getAlpine().showNotification("Engine Terhubung Otomatis!");
+                    clearInterval(adbAutoCloseInterval);
+                    if (typeof initializeAppFeatures === 'function') {
+                        await initializeAppFeatures();
+                    }
+                }
+            }
+        }, 2000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'block';
+        if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
     }
 
     document.getElementById('adb-pair-btn')?.addEventListener('click', () => {
@@ -164,7 +181,7 @@ function setupEventListeners() {
     });
 
     document.getElementById('adb-tutorial-btn')?.addEventListener('click', () => {
-        const tutorialUrl = 'https://vt.tiktok.com/ZSHpqFHHA/'; 
+        const tutorialUrl = 'https://neonproject.my.id/tutorial'; 
         if (window.Android && typeof window.Android.openInChrome === 'function') {
             window.Android.openInChrome(tutorialUrl);
         } else {
@@ -180,8 +197,30 @@ function setupEventListeners() {
         }
     });
 
+    document.getElementById('shizuku-recheck-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('shizuku-recheck-btn');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>CHECKING...`;
+        btn.disabled = true;
 
+        let isOk = false;
+        if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+            isOk = await window.Android.getShizukuStatus();
+        }
 
+        if (isOk) {
+            getAlpine().activeModal = '';
+            getAlpine().showNotification("Terminal Terhubung!");
+            if (typeof initializeAppFeatures === 'function') {
+                await initializeAppFeatures();
+            }
+        } else {
+            getAlpine().showNotification("Terminal masih offline.");
+        }
+
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    });
 
 
     document.getElementById('shizuku-later-btn')?.addEventListener('click', () => {
