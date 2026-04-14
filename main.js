@@ -173,6 +173,7 @@ function setupEventListeners() {
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
     let adbAutoCloseInterval = null;
+    let isCheckingStatus = false;
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
@@ -180,19 +181,32 @@ function setupEventListeners() {
 
         if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
         adbAutoCloseInterval = setInterval(async () => {
-            const alpine = getAlpine();
+            const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
+            
             if (alpine && alpine.activeModal === 'shizukuRequired') {
-                const isConnected = await window.Android.getShizukuStatus();
-                if (isConnected) {
-                    alpine.activeModal = '';
-                    alpine.showNotification("Engine Terhubung Otomatis!");
-                    clearInterval(adbAutoCloseInterval);
-                    if (typeof initializeAppFeatures === 'function') {
-                        await initializeAppFeatures();
+                if (isCheckingStatus) return;
+                isCheckingStatus = true;
+                
+                try {
+                    const isConnected = await window.Android.getShizukuStatus();
+                    if (isConnected) {
+                        alpine.activeModal = '';
+                        alpine.showNotification("Engine Terhubung Otomatis!");
+                        clearInterval(adbAutoCloseInterval);
+                        
+                        if (typeof initializeAppFeatures === 'function') {
+                            await initializeAppFeatures();
+                        }
                     }
+                } catch (e) {
+                    console.error("Error checking ADB status:", e);
+                } finally {
+                    isCheckingStatus = false;
                 }
+            } else if (alpine && alpine.activeModal !== 'shizukuRequired') {
+                clearInterval(adbAutoCloseInterval);
             }
-        }, 1500);
+        }, 2000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
@@ -234,14 +248,18 @@ function setupEventListeners() {
             isOk = await window.Android.getShizukuStatus();
         }
 
+        const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
+
         if (isOk) {
-            getAlpine().activeModal = '';
-            getAlpine().showNotification("Terminal Terhubung!");
+            if (alpine) {
+                alpine.activeModal = '';
+                alpine.showNotification("Terminal Terhubung!");
+            }
             if (typeof initializeAppFeatures === 'function') {
                 await initializeAppFeatures();
             }
         } else {
-            getAlpine().showNotification("Terminal masih offline.");
+            if (alpine) alpine.showNotification("Terminal masih offline / Proses injeksi...");
         }
 
         btn.innerHTML = originalHtml;
