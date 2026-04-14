@@ -499,21 +499,36 @@
             <div class="p-5 overflow-y-auto content-scroll">
                 
                 <div x-show="activeModal === 'shizukuRequired'" class="text-center">
-                    <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
-                    <h2 class="text-[11px] font-bold text-gray-200 mb-2 uppercase font-mono tracking-widest" data-lang-key="modal_shizuku_title">TERMINAL DISCONNECTED</h2>
-                    <p class="text-[10px] text-gray-400 mb-6 font-mono" data-lang-key="modal_shizuku_desc">System bridge is not active. Please start either Shizuku or iAdb to allow low-level engine execution.</p>
+                    
+                    <div id="ui-native-adb" style="display: none;">
+                        <i class="fas fa-wifi text-4xl text-blue-500 mb-4"></i>
+                        <h2 class="text-[11px] font-bold text-gray-200 mb-2 uppercase font-mono tracking-widest">ENGINE OFFLINE</h2>
+                        <p class="text-[10px] text-gray-400 mb-6 font-mono">Background Engine membutuhkan Wireless Debugging. Aktifkan di Opsi Pengembang dan lakukan Pairing.</p>
+                        <button id="adb-pair-btn" class="btn-press w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] mb-3 border border-blue-500/50">
+                            <i class="fas fa-link mr-2"></i><span>PAIR DEVICE</span>
+                        </button>
+                    </div>
+
+                    <div id="ui-legacy-shizuku" style="display: block;">
+                        <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+                        <h2 class="text-[11px] font-bold text-gray-200 mb-2 uppercase font-mono tracking-widest">SHIZUKU OFFLINE</h2>
+                        <p class="text-[10px] text-gray-400 mb-6 font-mono">Terminal belum terhubung. Pastikan aplikasi Shizuku atau iAdb berjalan di latar belakang.</p>
+                        <button id="shizuku-open-btn" class="btn-press w-full py-2.5 bg-accentRedDark hover:bg-accentRed text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-accentRed/50 mb-3">
+                            <i class="fas fa-external-link-alt mr-2"></i><span>BUKA SHIZUKU</span>
+                        </button>
+                    </div>
+
                     <div class="space-y-3">
-                        <button id="shizuku-recheck-btn" class="btn-press w-full py-2.5 bg-accentRedDark hover:bg-accentRed text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px] border border-accentRed/50">
-                            <i class="fas fa-sync-alt mr-2"></i><span data-lang-key="modal_shizuku_recheck_btn">Recheck Engine Status</span>
+                        <button id="shizuku-recheck-btn" class="btn-press w-full py-2.5 bg-[#1a0a0a] border border-sysBorder text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
+                            <i class="fas fa-sync-alt mr-2"></i><span>Recheck Status</span>
                         </button>
-                        <button id="shizuku-tutorial-btn" class="btn-press w-full py-2.5 bg-[#1a0a0a] border border-sysBorder text-gray-400 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
-                            <i class="fab fa-tiktok mr-2"></i><span data-lang-key="modal_shizuku_tutorial_btn">Watch Tutorial</span>
-                        </button>
-                        <button id="shizuku-later-btn" class="btn-press w-full py-2.5 bg-transparent border border-sysBorder text-gray-500 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
-                            <i class="fas fa-times mr-2"></i><span data-lang-key="modal_shizuku_later_btn">Later</span>
+                        <button @click="activeModal = ''" class="btn-press w-full py-2.5 bg-transparent border border-sysBorder text-gray-500 hover:text-white font-bold font-mono tracking-widest uppercase rounded-sm text-[10px]">
+                            <i class="fas fa-times mr-2"></i><span>Later</span>
                         </button>
                     </div>
                 </div>
+
+
 
                 <div x-show="activeModal === 'download'" class="text-center">
                     <h2 id="modal-title" class="text-[11px] font-bold text-gray-200 font-mono tracking-widest uppercase mb-5" data-lang-key="modal_download_title">RX DATA...</h2>

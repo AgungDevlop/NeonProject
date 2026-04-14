@@ -170,6 +170,33 @@ function setupEventListeners() {
         }
     });
 
+    const uiNativeAdb = document.getElementById('ui-native-adb');
+    const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
+
+    if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
+        if (uiNativeAdb) uiNativeAdb.style.display = 'block';
+        if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
+    } else {
+        if (uiNativeAdb) uiNativeAdb.style.display = 'none';
+        if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'block';
+    }
+
+    document.getElementById('adb-pair-btn')?.addEventListener('click', () => {
+        if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
+            window.Android.startAdbPairingFlow();
+        }
+    });
+
+    document.getElementById('shizuku-open-btn')?.addEventListener('click', () => {
+        if (window.Android && typeof window.Android.openInChrome === 'function') {
+            window.Android.openInChrome('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api');
+        } else {
+            window.open('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api', '_blank');
+        }
+    });
+
+
+
     document.getElementById('shizuku-later-btn')?.addEventListener('click', () => {
         if (window.pendingUpdate) {
             getAlpine().activeModal = 'update';
