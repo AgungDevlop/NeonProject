@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) { 
         getAlpine().showNotification("App failed to initialize properly."); 
     }
-
     setupEventListeners();
 });
 
@@ -171,7 +170,6 @@ function setupEventListeners() {
     document.getElementById("scan-games-btn")?.addEventListener("click", () => { if(typeof scanInstalledGames === 'function') scanInstalledGames(); });
     document.getElementById("restore-game-settings-btn")?.addEventListener("click", () => { if(typeof restoreGameSettings === 'function') restoreGameSettings(); });
 
-    // UI Handler Mode Abadi
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
     let adbAutoCloseInterval = null;
@@ -194,7 +192,7 @@ function setupEventListeners() {
                     }
                 }
             }
-        }, 2000);
+        }, 1500);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
