@@ -172,7 +172,6 @@ function setupEventListeners() {
 
     document.getElementById('shizuku-tutorial-btn')?.addEventListener('click', () => { window.open('https://vt.tiktok.com/ZSH4eTxc5/', '_blank'); });
 
-    // ADB / Shizuku UI Handler
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
     let adbAutoCloseInterval = null;
