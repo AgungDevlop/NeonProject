@@ -3,8 +3,21 @@ async function initializeAppFeatures() {
     await initializeDashboard(); 
 }
 
+const checkStatusAndInit = async () => {
+        if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+            const shizukuOk = await window.Android.getShizukuStatus();
+            if (shizukuOk) {
+                getAlpine().activeModal = '';
+                await initializeAppFeatures();
+            } else {
+                getAlpine().activeModal = 'shizukuRequired';
+            }
+        }
+    };
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        await checkStatusAndInit();
         await loadLanguages();
         await loadCommands(); 
         if (typeof loadTweakSettings === 'function') loadTweakSettings();
