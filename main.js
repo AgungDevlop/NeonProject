@@ -178,21 +178,17 @@ function setupEventListeners() {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
-        // Tidak memakai clearInterval, biarkan pulse check tetap ada untuk reliability
         setInterval(async () => {
             const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
             
-            if (!alpine) return;
-
-            // Hanya lakukan ping status jika pengguna memang sedang berada di hadapan modal pairing
-            if (alpine.activeModal === 'shizukuRequired') {
+            if (alpine && alpine.activeModal === 'shizukuRequired') {
                 if (isCheckingStatus) return;
                 isCheckingStatus = true;
                 
                 try {
                     const isConnected = await window.Android.getShizukuStatus();
                     if (isConnected) {
-                        alpine.activeModal = ''; // Auto Close!
+                        alpine.activeModal = ''; // Tutup modal secara paksa dari sisi JS
                         alpine.showNotification("Engine Terhubung Otomatis!");
                         
                         if (typeof initializeAppFeatures === 'function') {
@@ -210,6 +206,7 @@ function setupEventListeners() {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
     }
+
 
 
     document.getElementById('adb-pair-btn')?.addEventListener('click', () => {
