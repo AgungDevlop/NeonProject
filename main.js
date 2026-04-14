@@ -17,7 +17,6 @@ const checkStatusAndInit = async () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await checkStatusAndInit();
         await loadLanguages();
         await loadCommands(); 
         if (typeof loadTweakSettings === 'function') loadTweakSettings();
@@ -38,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const shizukuOk = await checkShizukuStatus();
         if (shizukuOk) { 
+            getAlpine().activeModal = '';
             await initializeAppFeatures();
         } else {
             getAlpine().activeModal = 'shizukuRequired';
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupEventListeners();
 });
+
 
 function setupEventListeners() {
     const setupTweakRadioListener = (containerId, name) => { 
@@ -169,11 +170,12 @@ function setupEventListeners() {
 
         if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
         adbAutoCloseInterval = setInterval(async () => {
-            if (getAlpine().activeModal === 'shizukuRequired') {
+            const alpine = getAlpine();
+            if (alpine && alpine.activeModal === 'shizukuRequired') {
                 const isConnected = await window.Android.getShizukuStatus();
                 if (isConnected) {
-                    getAlpine().activeModal = '';
-                    getAlpine().showNotification("Engine Terhubung Otomatis!");
+                    alpine.activeModal = '';
+                    alpine.showNotification("Engine Terhubung Otomatis!");
                     clearInterval(adbAutoCloseInterval);
                     if (typeof initializeAppFeatures === 'function') {
                         await initializeAppFeatures();
@@ -204,9 +206,9 @@ function setupEventListeners() {
 
     document.getElementById('shizuku-open-btn')?.addEventListener('click', () => {
         if (window.Android && typeof window.Android.openInChrome === 'function') {
-            window.Android.openInChrome('https://play.google.com/store/apps/details?id=com.iadb.helper');
+            window.Android.openInChrome('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api');
         } else {
-            window.open('https://play.google.com/store/apps/details?id=com.iadb.helper', '_blank');
+            window.open('https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api', '_blank');
         }
     });
 
@@ -235,8 +237,6 @@ function setupEventListeners() {
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     });
-
-
 
     document.getElementById('shizuku-later-btn')?.addEventListener('click', () => {
         if (window.pendingUpdate) {
