@@ -172,46 +172,45 @@ function setupEventListeners() {
 
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
-    let adbAutoCloseInterval = null;
     let isCheckingStatus = false;
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
-        if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
-        adbAutoCloseInterval = setInterval(async () => {
+        // Tidak memakai clearInterval, biarkan pulse check tetap ada untuk reliability
+        setInterval(async () => {
             const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
             
-            if (alpine && alpine.activeModal === 'shizukuRequired') {
+            if (!alpine) return;
+
+            // Hanya lakukan ping status jika pengguna memang sedang berada di hadapan modal pairing
+            if (alpine.activeModal === 'shizukuRequired') {
                 if (isCheckingStatus) return;
                 isCheckingStatus = true;
                 
                 try {
                     const isConnected = await window.Android.getShizukuStatus();
                     if (isConnected) {
-                        alpine.activeModal = '';
+                        alpine.activeModal = ''; // Auto Close!
                         alpine.showNotification("Engine Terhubung Otomatis!");
-                        clearInterval(adbAutoCloseInterval);
                         
                         if (typeof initializeAppFeatures === 'function') {
                             await initializeAppFeatures();
                         }
                     }
                 } catch (e) {
-                    console.error("Error checking ADB status:", e);
+                    console.error("Error:", e);
                 } finally {
                     isCheckingStatus = false;
                 }
-            } else if (alpine && alpine.activeModal !== 'shizukuRequired') {
-                clearInterval(adbAutoCloseInterval);
             }
         }, 2000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
-        if (adbAutoCloseInterval) clearInterval(adbAutoCloseInterval);
     }
+
 
     document.getElementById('adb-pair-btn')?.addEventListener('click', () => {
         if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
