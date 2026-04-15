@@ -25,6 +25,9 @@ async function checkForUpdates() {
     try {
         const localVersion = await loadAppVersion();
         if (localVersion === "0.0.0") return false;
+        
+        if (typeof VERSION_URL === 'undefined') return false;
+
         const response = await fetch(VERSION_URL, { cache: "no-store" });
         const data = await response.json();
         
@@ -33,13 +36,25 @@ async function checkForUpdates() {
             
             const releaseNotesHTML = `<ul>${data.releaseNotes.map(note => `<li>${note}</li>`).join('')}</ul>`;
             document.getElementById('update-notes').innerHTML = releaseNotesHTML;
-            
             document.getElementById('update-link').href = data.downloadUrl;
             
-            translateUI(); 
+            if (typeof translateUI === 'function') translateUI(); 
+
+            const alpineData = typeof getAlpine === 'function' ? getAlpine() : null;
+            if (alpineData) {
+                if (alpineData.activeModal === 'shizukuRequired') {
+                    window.pendingUpdate = true;
+                } else {
+                    alpineData.activeModal = 'update';
+                }
+            } else {
+                window.pendingUpdate = true;
+            }
 
             return true;
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error(e);
+    }
     return false;
 }

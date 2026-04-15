@@ -1,10 +1,11 @@
 {
-  "latestVersion": "2.1",
+  "latestVersion": "2.4",
   "releaseNotes": [
-    "Seamless Gaming Experience: Intrusive system overlays and default Game Booster interruptions have been completely eliminated, ensuring a pure and immersive gaming session.",
-    "Instant HUD Deployment: The Floating Control Panel now launches flawlessly in the blink of an eye on all Android versions, requiring zero manual permission setups from the user.",
-    "Maximum Device Compatibility: Heavily optimized to run perfectly on all smartphones, including entry-level devices. Enjoy ultra-fast transitions back to your game without annoying app reloads or lag.",
-    "Bulletproof Stability: Resolved startup glitches and storage reading errors. The Neon Engine now guarantees a 100% stable and secure boot every time you tap the Quick Setting Tile."
+    "Unbreakable Connection: Mesin aplikasi kini tetap aktif sepenuhnya meskipun kamu mematikan Wi-Fi atau berpindah ke jaringan seluler. Nikmati performa gaming yang stabil di mana saja tanpa takut koneksi terputus.",
+    "Hyper-Responsive Dashboard: Mengatasi masalah layar kosong (blank) pada panel pemantauan. Kini data metrik perangkatmu seperti CPU, RAM, Suhu, dan Ping akan muncul dan diperbarui secara real-time dengan sangat mulus.",
+    "Zero Freezes & Crashes: Kami telah merombak sistem inti agar merespons secepat kilat. Tidak ada lagi lag, macet (freeze), atau aplikasi keluar sendiri saat kamu membuka panel atau menekan tombol Quick Setting di status bar.",
+    "Android 15 Ready: Dukungan kompatibilitas penuh untuk perangkat dengan sistem operasi Android 14 dan 15 terbaru. Menjamin tidak ada penutupan aplikasi secara paksa oleh sistem dan memberikan tampilan layar penuh yang lebih imersif.",
+    "Smart Update System: Sistem notifikasi pembaruan dalam aplikasi telah diperbaiki, sehingga kamu tidak akan pernah ketinggalan informasi ketika ada fitur baru yang rilis."
   ],
   "downloadUrl": "https://neonmagisk.my.id"
 }
