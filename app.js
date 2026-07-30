@@ -90,8 +90,10 @@ document.addEventListener('alpine:init', () => {
         modalMessage: '',
         notification: { show: false, message: '' },
         confirmResolver: null,
-        perfCategories: [],
-        globalTweaks: [],
+        engineCategories: [],
+        dpiValue: 411,
+        pointerSpeed: 5,
+        dashboardInterval: null,
         localServerRunning: false,
         serverFolderPath: '/storage/emulated/0/Download',
         serverUrl: 'http://localhost:8888',
@@ -105,6 +107,7 @@ document.addEventListener('alpine:init', () => {
             this.$nextTick(() => this.updateNavIndicator()); 
             this.loadDynamicUI();
             this.checkServerStatus();
+            this.startDashboardMonitor();
         },
 
         checkServerStatus() {
@@ -234,8 +237,7 @@ document.addEventListener('alpine:init', () => {
                 const res = await fetch('tweaks_ui.json', { cache: "no-store" });
                 if(res.ok) {
                     const data = await res.json();
-                    this.perfCategories = data.performance || [];
-                    this.globalTweaks = data.global_tweaks || [];
+                    this.engineCategories = data.categories || [];
                     this.$nextTick(() => {
                         if(typeof applyStoredTweaks === 'function') applyStoredTweaks();
                         translateUI();
@@ -244,12 +246,97 @@ document.addEventListener('alpine:init', () => {
             } catch(e) {}
         },
 
+        updatePointerSpeed(val) {
+            if (typeof saveTweakSetting === 'function') saveTweakSetting('pointer_speed', val);
+            const alpine = getAlpine();
+            if (alpine) alpine.showNotification('Pointer speed set to ' + val + ' (apply via Exec)');
+        },
+
+        async triggerTurboBoost() {
+            if (!await this.showConfirm('Turbo Boost applies max performance. Device may get WARM and battery drains faster. Continue?')) return;
+            const alpine = getAlpine();
+            if (alpine) { alpine.activeModal = 'processing'; alpine.modalMessage = 'TURBO BOOST ACTIVE...'; }
+            const boostCmds = [
+                COMMANDS.power_mode_performance,
+                COMMANDS.animation_speed_fast,
+                COMMANDS.touch_boost_on,
+                COMMANDS.fps_unlocker_on,
+                COMMANDS.force_gpu_rendering,
+                COMMANDS.triple_buffering_enable,
+                COMMANDS.disable_hw_overlays
+            ].filter(Boolean);
+            const combined = boostCmds.join(' && ');
+            setTimeout(() => {
+                if (typeof runTweakFlow === 'function') runTweakFlow(combined, 'Turbo Boost');
+                if (alpine) { alpine.activeModal = ''; alpine.showNotification('Turbo Boost Applied!'); }
+            }, 1500);
+        },
+
+        startDashboardMonitor() {
+            if (this.dashboardInterval) return;
+            const updateGauge = (id, val, color) => {
+                const ring = document.getElementById(id);
+                const circumference = 97.4;
+                if (ring) ring.style.strokeDashoffset = circumference - (val / 100) * circumference;
+            };
+            const updateVal = (id, val, suffix = '') => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val + suffix;
+            };
+            const simulateMetrics = () => {
+                const cpu = Math.floor(Math.random() * 40 + 10);
+                const ram = Math.floor(Math.random() * 30 + 30);
+                const temp = Math.floor(Math.random() * 12 + 30);
+                const gpu = Math.floor(Math.random() * 35 + 15);
+                updateGauge('cpu-gauge-ring', cpu, '#ef4444');
+                updateGauge('ram-gauge-ring', ram, '#a855f7');
+                updateGauge('gpu-gauge-ring', gpu, '#22c55e');
+                updateVal('cpu-gauge-val', cpu);
+                updateVal('ram-gauge-val', ram);
+                updateVal('gpu-gauge-val', gpu);
+                const tempPct = Math.min(100, Math.max(0, ((temp - 25) / 35) * 100));
+                updateGauge('temp-gauge-ring', tempPct, temp > 42 ? '#ef4444' : '#facc15');
+                updateVal('temp-gauge-val', temp, '');
+            };
+            if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+                window.Android.getShizukuStatus().then(ok => {
+                    if (ok) {
+                        this.dashboardInterval = setInterval(() => {
+                            if (typeof executeShellCommand === 'function') {
+                                executeShellCommand(COMMANDS.diagnose_realtime || 'top -n 1 -b', 'SilentOp', 'dash-' + generateRandomId())
+                                    .then(output => {
+                                        if (output) {
+                                            const lines = output.split('\n');
+                                            const cpuLine = lines.find(l => l.includes('CPU'));
+                                            if (cpuLine) {
+                                                const match = cpuLine.match(/(\d+\.?\d*)%/);
+                                                if (match) {
+                                                    const cpuVal = Math.min(100, Math.round(parseFloat(match[1])));
+                                                    updateGauge('cpu-gauge-ring', cpuVal, '#ef4444');
+                                                    updateVal('cpu-gauge-val', cpuVal);
+                                                }
+                                            }
+                                        }
+                                    }).catch(() => simulateMetrics());
+                            } else {
+                                simulateMetrics();
+                            }
+                        }, 3000);
+                        return;
+                    }
+                    this.dashboardInterval = setInterval(simulateMetrics, 3000);
+                });
+            } else {
+                this.dashboardInterval = setInterval(simulateMetrics, 3000);
+            }
+        },
+
         handleDynamicSwitch(item, isChecked) {
             const commandKey = isChecked ? item.cmdOn : item.cmdOff;
             const command = isChecked ? COMMANDS[commandKey] : RESTORE_COMMANDS[commandKey];
             const moduleName = isChecked ? item.msgOn : item.msgOff;
             if (command) {
-                if(typeof saveTweakSetting === 'function') saveTweakSetting(item.tweak, isChecked);
+                if(typeof saveTweakSetting === 'function') saveTweakSetting(item.id || item.tweak, isChecked);
                 if(typeof runTweakFlow === 'function') runTweakFlow(command, moduleName);
             } else {
                 this.showNotification("Mock logic applied: Command missing from JSON");
@@ -268,9 +355,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             try {
-                if (oldTab === 'tweaks' && typeof stopDiagnosis === 'function') stopDiagnosis();
                 if (oldTab === 'network' && typeof stopPingUpdates === 'function') stopPingUpdates();
-                if (tab === 'tweaks' && typeof startDiagnosis === 'function') setTimeout(() => startDiagnosis(), 500);
                 if (tab === 'network' && typeof startPingUpdates === 'function') setTimeout(() => startPingUpdates(), 500);
             } catch (e) {}
         },

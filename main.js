@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof renderLogs === 'function') renderLogs(); 
         if (typeof renderTweakComponents === 'function') renderTweakComponents(); 
         if (typeof initializeNetworkTab === 'function') initializeNetworkTab();
-        if (typeof initializeDiagnosisChart === 'function') initializeDiagnosisChart(); 
         if (typeof initializeBuilder === 'function') initializeBuilder();
     } catch (error) { 
         getAlpine().showNotification("App failed to initialize properly."); 
@@ -88,19 +87,21 @@ function setupEventListeners() {
     document.getElementById("apply-updatable-driver-btn")?.addEventListener("click", () => applyPerAppTweak('force_updatable_driver_for_app', getLangString('tweaks_updatable_driver')));
 
     document.getElementById("set-dpi-btn")?.addEventListener("click", () => { 
-        const dpiInput = document.getElementById("dpi-input");
-        if (!dpiInput) return;
-        const dpi = dpiInput.value; 
-        if (!dpi) return; 
+        const dpiSlider = document.getElementById("dpi-slider");
+        if (!dpiSlider) return;
+        const dpi = dpiSlider.value; 
+        if (!dpi || dpi < 240 || dpi > 600) { getAlpine().showNotification("DPI out of safe range (240-600)"); return; }
         if(typeof saveTweakSetting === 'function') saveTweakSetting('dpi', dpi); 
         if(typeof runTweakFlow === 'function') runTweakFlow(COMMANDS.set_dpi.replace('{value}', dpi), getLangString('tweaks_dpi_label')); 
     });
     
     document.getElementById("reset-dpi-btn")?.addEventListener("click", () => { 
         if(typeof saveTweakSetting === 'function') saveTweakSetting('dpi', ''); 
-        const dpiInput = document.getElementById("dpi-input");
-        if (dpiInput) dpiInput.value = ''; 
         if(typeof runTweakFlow === 'function') runTweakFlow(COMMANDS.reset_dpi, getLangString('tweaks_dpi_label')); 
+        const dpiSlider = document.getElementById("dpi-slider");
+        const dpiLabel = document.getElementById("dpi-value-label");
+        if (dpiSlider) { dpiSlider.value = 411; dpiSlider.dispatchEvent(new Event('input')); }
+        if (dpiLabel) dpiLabel.textContent = '411';
     });
 
     const setupUtilityButton = (btnId, commandKey, langKey) => {
@@ -123,6 +124,55 @@ function setupEventListeners() {
     setupUtilityButton('log-cleaner-btn', 'log_cleaner', 'tweaks_log_cleaner');
     setupUtilityButton('fstrim-btn', 'fstrim_command', 'tweaks_fstrim');
     setupUtilityButton('dex-compile-btn', 'force_dex_compile', 'tweaks_dex_compile');
+
+    document.getElementById("apply-pointer-btn")?.addEventListener("click", () => {
+        const slider = document.getElementById("pointer-speed-slider");
+        if (!slider) return;
+        const val = slider.value;
+        if (typeof saveTweakSetting === 'function') saveTweakSetting('pointer_speed', val);
+        if (typeof runTweakFlow === 'function') {
+            const cmd = COMMANDS.pointer_speed_fast.replace(/(pointer_speed) \d/, '$1 ' + val);
+            runTweakFlow(cmd, 'Pointer Speed ' + val);
+        }
+    });
+
+    document.getElementById("profile-gaming-btn")?.addEventListener("click", () => {
+        const cmds = [
+            COMMANDS.power_mode_performance,
+            COMMANDS.animation_speed_fast,
+            COMMANDS.touch_boost_on,
+            COMMANDS.fps_unlocker_on,
+            COMMANDS.force_gpu_rendering,
+            COMMANDS.triple_buffering_enable,
+            COMMANDS.disable_hw_overlays,
+            COMMANDS.game_mode_on,
+            COMMANDS.high_touch_sens_on,
+            COMMANDS.gaming_dnd_on
+        ].filter(Boolean);
+        if (typeof runTweakFlow === 'function') runTweakFlow(cmds.join(' && '), 'Gaming Profile');
+    });
+
+    document.getElementById("profile-balanced-btn")?.addEventListener("click", () => {
+        const cmds = [
+            COMMANDS.animation_speed_fast,
+            COMMANDS.disable_ui_blurs_on,
+            COMMANDS.background_limiter_on,
+            COMMANDS.force_gpu_rendering,
+            COMMANDS.high_touch_sens_on,
+            COMMANDS.scroll_friction_fast
+        ].filter(Boolean);
+        if (typeof runTweakFlow === 'function') runTweakFlow(cmds.join(' && '), 'Balanced Profile');
+    });
+
+    document.getElementById("profile-stock-btn")?.addEventListener("click", async () => {
+        if (await getAlpine().showConfirm("Restore all settings to stock? This resets all tweaks.")) {
+            if (typeof runTweakFlow === 'function' && typeof RESTORE_COMMANDS !== 'undefined') {
+                runTweakFlow(Object.values(RESTORE_COMMANDS).join(' && '), 'Restore Stock');
+            }
+            localStorage.removeItem('tweakSettings');
+            setTimeout(() => location.reload(), 2500);
+        }
+    });
 
     document.getElementById("restore-tweaks-btn")?.addEventListener("click", async () => { 
         if (await getAlpine().showConfirm(getLangString("notification_confirm_restore_tweaks"))) { 
