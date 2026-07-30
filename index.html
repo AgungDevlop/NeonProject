@@ -89,7 +89,7 @@
                     <p class="text-[8px] text-gray-600 font-mono"><span data-lang-key="dashboard_temp">Tmp</span>: <span id="battery-temp">--</span>&deg;C</p>
                 </div>
             </div>
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="px-3.5 py-2 border-b border-[#27272a]/50 bg-black/20">
                     <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] font-mono" data-lang-key="dashboard_sysinfo_title">Device Identity</h3>
                 </div>
@@ -132,7 +132,7 @@
 
             <!-- Dynamic categories from JSON -->
             <template x-for="(cat, ci) in engineCategories" :key="cat.title">
-                <div class="card-gaming overflow-hidden" :style="`animation: slideUp 0.3s ease-out ${ci * 0.05}s both`">
+                <div class="card-gaming" :style="`animation: slideUp 0.3s ease-out ${ci * 0.05}s both`">
                     <div class="cat-header" :style="`border-left: 3px solid ${cat.color}`">
                         <div class="cat-icon" :style="`background: ${cat.color}15; border-color: ${cat.color}30; color: ${cat.color}`"><i :class="cat.icon"></i></div>
                         <span class="cat-title" :style="`color: ${cat.color}`" x-text="cat.title"></span>
@@ -161,7 +161,7 @@
             </template>
 
             <!-- Global Config -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header"><div class="cat-icon bg-yellow-900/30 border border-yellow-500/20 text-yellow-400"><i class="fas fa-paint-brush"></i></div><span class="cat-title text-gray-300">Global Config</span></div>
                 <div class="p-3.5 border-b border-[#27272a]/40 bg-black/10">
                     <div id="renderer-options" class="space-y-1.5"></div>
@@ -205,7 +205,7 @@
             </div>
 
             <!-- JIT Compiler -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header"><div class="cat-icon bg-cyan-900/30 border border-cyan-500/20 text-cyan-400"><i class="fas fa-microchip"></i></div><span class="cat-title text-gray-300" data-lang-key="perf_jit_title">JIT Compiler</span></div>
                 <div class="flex items-center justify-between p-3.5 bg-black/10">
                     <div class="flex-1 min-w-0 pr-3">
@@ -217,7 +217,7 @@
             </div>
 
             <!-- Performance Dashboard -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header">
                     <div class="cat-icon bg-red-900/30 border border-red-500/20 text-red-400"><i class="fas fa-tachometer-alt"></i></div>
                     <span class="cat-title text-gray-300">Performance Monitor</span>
@@ -294,7 +294,7 @@
             </div>
 
             <!-- Touch Tuner (New) -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header">
                     <div class="cat-icon bg-orange-900/30 border border-orange-500/20 text-orange-400"><i class="fas fa-hand-pointer"></i></div>
                     <span class="cat-title text-gray-300">Touch & Input</span>
@@ -328,7 +328,7 @@
             </div>
 
             <!-- Performance Profiles -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header">
                     <div class="cat-icon bg-purple-900/30 border border-purple-500/20 text-purple-400"><i class="fas fa-rocket"></i></div>
                     <span class="cat-title text-gray-300">Performance Profiles</span>
@@ -358,7 +358,7 @@
             </div>
 
             <!-- Display Tools -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header">
                     <div class="cat-icon bg-sky-900/30 border border-sky-500/20 text-sky-400"><i class="fas fa-eye"></i></div>
                     <span class="cat-title text-gray-300">Display Tools</span>
@@ -384,7 +384,7 @@
             </div>
 
             <!-- Safe Debloat (Brevent-style) -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header">
                     <div class="cat-icon bg-teal-900/30 border border-teal-500/20 text-teal-400"><i class="fas fa-shield-alt"></i></div>
                     <span class="cat-title text-gray-300">Safe Debloat</span>
@@ -423,7 +423,7 @@
             </div>
 
             <!-- Maintenance Commands -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header"><div class="cat-icon bg-emerald-900/30 border border-emerald-500/20 text-emerald-400"><i class="fas fa-tools"></i></div><span class="cat-title text-gray-300" data-lang-key="tweaks_utility_title">Maintenance Commands</span></div>
                 <div class="grid grid-cols-3 gap-2 p-3.5 bg-black/10">
                     <button id="ram-cleaner-btn" class="maint-btn"><i class="fas fa-memory text-red-500"></i><span>Drop RAM</span></button>
@@ -436,7 +436,7 @@
             </div>
 
             <!-- Targeted Hooks -->
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="cat-header"><div class="cat-icon bg-orange-900/30 border border-orange-500/20 text-orange-400"><i class="fas fa-crosshairs"></i></div><span class="cat-title text-gray-300" data-lang-key="tweaks_per_app_title">Targeted Hooks</span></div>
                 <div class="p-3.5 bg-black/10">
                     <input id="package-name-input" type="text" class="w-full bg-black/50 border border-[#27272a]/50 rounded-lg px-3 py-2 text-[11px] font-mono text-gray-200 focus:outline-none focus:border-red-500/40 focus:ring-1 focus:ring-red-500/15 mb-2.5 placeholder-gray-700" placeholder="com.target.pkg">
@@ -481,7 +481,7 @@
                     <div class="p-3.5 flex-grow bg-black/10" id="dns-options-container"></div>
                 </div>
             </div>
-            <div class="card-gaming overflow-hidden">
+            <div class="card-gaming">
                 <div class="px-3.5 py-2.5 border-b border-[#27272a]/50 bg-black/20">
                     <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] font-mono" data-lang-key="net_advanced_title">Interface Settings</h3>
                 </div>
@@ -548,13 +548,13 @@
                  <p class="text-[9px] text-gray-500 font-mono tracking-[0.15em] uppercase font-bold" data-lang-key="game_scanning">Scanning Manifests...</p>
             </div>
             <div id="game-lists" class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="card-gaming overflow-hidden flex flex-col">
+                <div class="card-gaming flex flex-col">
                     <div class="px-3.5 py-2.5 border-b border-[#27272a]/50 bg-black/20">
                         <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] font-mono" data-lang-key="game_selected_title">Monitored Targets</h3>
                     </div>
                     <div class="p-3.5 flex-grow bg-black/10 max-h-[35vh] overflow-y-auto content-scroll"><div id="selected-games-list" class="space-y-2 font-mono text-[10px]"></div></div>
                 </div>
-                <div class="card-gaming overflow-hidden flex flex-col">
+                <div class="card-gaming flex flex-col">
                     <div class="px-3.5 py-2.5 border-b border-[#27272a]/50 bg-black/20">
                         <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] font-mono" data-lang-key="game_detected_title">Installed Packages</h3>
                     </div>
