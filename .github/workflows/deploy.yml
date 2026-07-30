@@ -11,34 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Extract zip if present
+    - name: Extract zip
       run: |
         ZIP=$(ls *.zip 2>/dev/null | head -1)
-        if [ -z "$ZIP" ]; then
-          echo "No zip file found"
-          exit 0
-        fi
+        test -n "$ZIP" || { echo "No zip"; exit 0; }
         echo "Found: $ZIP"
-        unzip -o "$ZIP" -d extracted
-        cp -r extracted/* ./
-        cp -r extracted/.[!.]* ./ 2>/dev/null || true
-        rm -rf extracted "$ZIP"
-        echo "Extract done"
+        unzip -o "$ZIP"
+        rm -f "$ZIP"
 
-    - name: Commit extracted files
+    - name: Move files to root
+      run: |
+        if [ -d NeonCoreUI ]; then
+          find NeonCoreUI -mindepth 1 -maxdepth 1 -exec mv {} ./ \;
+          rmdir NeonCoreUI
+        fi
+        if [ -d extracted ]; then
+          find extracted -mindepth 1 -maxdepth 1 -exec mv {} ./ \;
+          rmdir extracted
+        fi
+
+    - name: Commit and push
       run: |
         git config user.name "neon-deploy"
         git config user.email "deploy@neon.local"
         git add -A
-        CHANGED=$(git diff --cached --name-only)
-        if [ -z "$CHANGED" ]; then
-          echo "No changes to commit"
-          exit 0
-        fi
-        echo "Changed: $CHANGED"
+        git diff --cached --quiet && echo "No changes" && exit 0
         git commit -m "Deploy NeonCore UI $(date +%Y-%m-%d)"
         git push
-        echo "Push done"
+        echo "Done"
