@@ -17,23 +17,28 @@ jobs:
     - name: Extract zip if present
       run: |
         ZIP=$(ls *.zip 2>/dev/null | head -1)
-        if [ -n "$ZIP" ]; then
-          echo "Found: $ZIP"
-          unzip -o "$ZIP" -d extracted
-          rsync -a extracted/ ./
-          rm -rf extracted "$ZIP"
-        else
+        if [ -z "$ZIP" ]; then
           echo "No zip file found"
+          exit 0
         fi
+        echo "Found: $ZIP"
+        unzip -o "$ZIP" -d extracted
+        cp -r extracted/* ./
+        cp -r extracted/.[!.]* ./ 2>/dev/null || true
+        rm -rf extracted "$ZIP"
+        echo "Extract done"
 
     - name: Commit extracted files
       run: |
         git config user.name "neon-deploy"
         git config user.email "deploy@neon.local"
         git add -A
-        if git diff --cached --quiet; then
+        CHANGED=$(git diff --cached --name-only)
+        if [ -z "$CHANGED" ]; then
           echo "No changes to commit"
-        else
-          git commit -m "Deploy NeonCore UI $(date +%Y-%m-%d)"
-          git push
+          exit 0
         fi
+        echo "Changed: $CHANGED"
+        git commit -m "Deploy NeonCore UI $(date +%Y-%m-%d)"
+        git push
+        echo "Push done"
