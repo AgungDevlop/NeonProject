@@ -1,1 +1,41 @@
+name: Deploy NeonCore UI
 
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Extract zip if present
+      run: |
+        ZIP=$(ls *.zip 2>/dev/null | head -1)
+        if [ -n "$ZIP" ]; then
+          echo "Found: $ZIP"
+          unzip -o "$ZIP" -d extracted
+          rsync -a extracted/ ./
+          rm -rf extracted "$ZIP"
+        else
+          echo "No zip file found"
+        fi
+
+    - name: Commit extracted files
+      run: |
+        git config user.name "neon-deploy"
+        git config user.email "deploy@neon.local"
+        git add -A
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Deploy NeonCore UI $(date +%Y-%m-%d)"
+          git push
+        fi
