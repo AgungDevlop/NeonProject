@@ -13,34 +13,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Extract zip via Python
+    - name: Extract zip
       run: |
         ZIP=$(ls *.zip 2>/dev/null | head -1)
-        test -n "$ZIP" || { echo "No zip found"; exit 0; }
+        test -z "$ZIP" && echo "No zip" && exit 0
         echo "Extracting: $ZIP"
-        python3 -c "
-import zipfile, sys, os
-z = zipfile.ZipFile(sys.argv[1], 'r')
-files = z.namelist()
-for f in files:
-    # fix backslash paths from Windows zip
-    dst = f.replace('\\', '/')
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
-    with z.open(f) as src, open(dst, 'wb') as out:
-        out.write(src.read())
-    print('  ' + dst)
-z.close()
-print(f'Extracted {len(files)} files')
-" "$ZIP"
+        unzip -qo "$ZIP"
         rm -f "$ZIP"
-        echo "Extract done"
+        echo "Done"
 
     - name: Commit and push
       run: |
         git config user.name "neon-deploy"
         git config user.email "deploy@neon.local"
         git add -A
-        git diff --cached --quiet && echo "No changes" && exit 0
+        CHANGED=$(git diff --cached --name-only)
+        test -z "$CHANGED" && echo "No changes" && exit 0
+        echo "$CHANGED"
         git commit -m "Deploy NeonCore UI $(date +%Y-%m-%d)"
         git push
-        echo "Done"
+        echo "All done"
