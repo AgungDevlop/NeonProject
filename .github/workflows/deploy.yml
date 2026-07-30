@@ -13,24 +13,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Extract zip
+    - name: Extract zip via Python
       run: |
         ZIP=$(ls *.zip 2>/dev/null | head -1)
-        test -n "$ZIP" || { echo "No zip"; exit 0; }
-        echo "Found: $ZIP"
-        unzip -o "$ZIP"
+        test -n "$ZIP" || { echo "No zip found"; exit 0; }
+        echo "Extracting: $ZIP"
+        python3 -c "
+import zipfile, sys, os
+z = zipfile.ZipFile(sys.argv[1], 'r')
+files = z.namelist()
+for f in files:
+    # fix backslash paths from Windows zip
+    dst = f.replace('\\', '/')
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    with z.open(f) as src, open(dst, 'wb') as out:
+        out.write(src.read())
+    print('  ' + dst)
+z.close()
+print(f'Extracted {len(files)} files')
+" "$ZIP"
         rm -f "$ZIP"
-
-    - name: Move files to root
-      run: |
-        if [ -d NeonCoreUI ]; then
-          find NeonCoreUI -mindepth 1 -maxdepth 1 -exec mv {} ./ \;
-          rmdir NeonCoreUI
-        fi
-        if [ -d extracted ]; then
-          find extracted -mindepth 1 -maxdepth 1 -exec mv {} ./ \;
-          rmdir extracted
-        fi
+        echo "Extract done"
 
     - name: Commit and push
       run: |
