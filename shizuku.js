@@ -93,12 +93,14 @@ function executeShellCommand(command, moduleName, id) {
 
         _shellCallbacks.set(id, {
             onOutput: (mName, data, logId) => {
-                output += data + "\n";
+                // Java now sends FULL multi-line output in ONE call (batch mode).
+                // Replace output entirely — do NOT append, there is only one call.
+                output = data;
             },
             onComplete: (mName, success, logId) => {
                 clearTimeout(timeoutId);
                 if (success) {
-                    resolve(output.trim());
+                    resolve(output); // Do NOT trim — preserves trailing \n needed for split
                 } else {
                     reject(new Error(`Command failed: ${moduleName}`));
                 }

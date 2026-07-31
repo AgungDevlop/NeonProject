@@ -62,25 +62,30 @@ const checkStatusAndInit = async () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await checkStatusAndInit();
+        // NOTE: Do NOT call checkStatusAndInit() here.
+        // ADB init is handled by:
+        //   1. onPageFinished (Java) → tryInit() → initializeAppFeatures()
+        //   2. DAEMON_READY broadcast → notifyEngineReady() → initializeAppFeatures()
+        // Calling checkStatusAndInit() here races with onPageFinished and causes double-init.
         await loadLanguages();
-        await loadCommands(); 
+        await loadCommands();
         if (typeof loadTweakSettings === 'function') loadTweakSettings();
-        
+
         await Promise.all([
-            loadFpsModules(), 
-            loadFakeDevices(), 
+            loadFpsModules(),
+            loadFakeDevices(),
             loadGames(),
-            loadPerformanceCommands(), 
+            loadPerformanceCommands(),
             checkForUpdates()
         ]);
-        
-        if (typeof renderLogs === 'function') renderLogs(); 
-        if (typeof renderTweakComponents === 'function') renderTweakComponents(); 
+
+        if (typeof renderLogs === 'function') renderLogs();
+        if (typeof renderTweakComponents === 'function') renderTweakComponents();
         if (typeof initializeNetworkTab === 'function') initializeNetworkTab();
         if (typeof initializeBuilder === 'function') initializeBuilder();
-    } catch (error) { 
-        getAlpine().showNotification("App failed to initialize properly."); 
+    } catch (error) {
+        const alpine = getAlpine();
+        if (alpine) alpine.showNotification("App failed to initialize properly.");
     }
     setupEventListeners();
 });

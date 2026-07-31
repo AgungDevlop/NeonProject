@@ -76,7 +76,7 @@ async function initializeDashboard() {
     ].join(" && echo '---NEON_SPLIT---' && ");
     try {
         const output = await executeShellCommand(command, 'DeviceInfo', `static-${generateRandomId()}`);
-        const parts = output.split('---NEON_SPLIT---\n');
+        const parts = output.split(/---NEON_SPLIT---\n?/);
         document.getElementById('device-name').textContent = `${parts[0] ?? '...'} ${parts[1] ?? '...'}`;
         document.getElementById('device-cpu-arch').textContent = parts[2] ?? '...';
         document.getElementById('device-sdk').textContent = parts[3] ?? '...';
@@ -116,7 +116,7 @@ async function updateRealtimeInfo() {
         ].join(" && echo '---NEON_SPLIT---' && ");
 
         const output = await executeShellCommand(command, 'DeviceInfo', `realtime-${generateRandomId()}`);
-        const parts = output.split('---NEON_SPLIT---\n');
+        const parts = output.split(/---NEON_SPLIT---\n?/);
         const memInfo = parts[0] ?? '';
         const memTotal = parseInt(memInfo.match(/MemTotal:\s+(\d+)/)?.[1] ?? 0),
             memAvailable = parseInt(memInfo.match(/MemAvailable:\s+(\d+)/)?.[1] ?? 0);
