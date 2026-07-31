@@ -1,6 +1,13 @@
+let isInitializingAppFeatures = false;
 async function initializeAppFeatures() {
-    await checkDnsStatus(); 
-    await initializeDashboard(); 
+    if (isInitializingAppFeatures) return;
+    isInitializingAppFeatures = true;
+    try {
+        await checkDnsStatus(); 
+        await initializeDashboard(); 
+    } finally {
+        isInitializingAppFeatures = false;
+    }
 }
 
 const checkStatusAndInit = async () => {
