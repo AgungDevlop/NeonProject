@@ -40,6 +40,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
 });
 
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') {
+        try {
+            await checkStatusAndInit();
+        } catch (e) {
+            console.error("Error checking status on resume:", e);
+        }
+    }
+});
+
 function setupEventListeners() {
     const setupTweakRadioListener = (containerId, name) => { 
         const container = document.getElementById(containerId);
