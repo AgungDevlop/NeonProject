@@ -3,12 +3,40 @@ async function initializeAppFeatures() {
     if (isInitializingAppFeatures) return;
     isInitializingAppFeatures = true;
     try {
-        await checkDnsStatus(); 
-        await initializeDashboard(); 
+        // Force-reset status cache on every feature init so getCachedShizukuStatus()
+        // always does a fresh Java call instead of returning stale 'false'.
+        if (typeof _lastStatusCheck !== 'undefined') _lastStatusCheck = 0;
+        await checkDnsStatus();
+        await initializeDashboard();
     } finally {
         isInitializingAppFeatures = false;
     }
 }
+
+/**
+ * Called by Java (from NeonCoreUIWebInterface.notifyEngineReady) when DAEMON_READY fires.
+ * This is the authoritative "engine is connected" signal from the Java side.
+ * Resets status cache and triggers full dashboard initialization.
+ */
+window.notifyEngineReady = async function() {
+    // Reset cache — force fresh getShizukuStatus() call on next check
+    if (typeof _lastStatusCheck !== 'undefined') _lastStatusCheck = 0;
+    if (typeof _cachedStatus !== 'undefined') _cachedStatus = false;
+
+    const alpine = typeof getAlpine === 'function' ? getAlpine() : null;
+    if (alpine) {
+        if (alpine.activeModal === 'shizukuRequired' || alpine.activeModal === '') {
+            alpine.activeModal = '';
+            alpine.showNotification('Engine Terhubung!');
+        }
+    }
+    // Stop the ADB polling loop since we're now connected
+    if (window._adbPollInterval) {
+        clearInterval(window._adbPollInterval);
+        window._adbPollInterval = null;
+    }
+    await initializeAppFeatures();
+};
 
 // isCheckingStatus prevents concurrent calls from DOMContentLoaded AND visibilitychange
 let isCheckingStatus = false;
@@ -19,10 +47,12 @@ const checkStatusAndInit = async () => {
         if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
             const shizukuOk = await window.Android.getShizukuStatus();
             if (shizukuOk) {
-                getAlpine().activeModal = '';
+                const alpine = getAlpine();
+                if (alpine) alpine.activeModal = '';
                 await initializeAppFeatures();
             } else {
-                getAlpine().activeModal = 'shizukuRequired';
+                const alpine = getAlpine();
+                if (alpine) alpine.activeModal = 'shizukuRequired';
             }
         }
     } finally {

@@ -2,7 +2,9 @@ let realtimeUpdateInterval = null;
 let isUpdatingRealtime = false; // Guard: prevent concurrent updateRealtimeInfo calls
 let _lastStatusCheck = 0;       // Timestamp of last ADB status check
 let _cachedStatus = false;      // Cached ADB status (only re-validate every 30s)
+let _realtimeErrorCount = 0;    // Count consecutive errors before stopping interval
 const STATUS_CACHE_MS = 30000;  // Re-check ADB status at most every 30 seconds
+const REALTIME_MAX_ERRORS = 5;  // Stop realtime updates after 5 consecutive errors
 const cpuState = { prevIdle: 0, prevTotal: 0 };
 
 async function checkDnsStatus() {
@@ -83,9 +85,10 @@ async function initializeDashboard() {
         document.getElementById('device-uptime').textContent = (parts[6] ?? '...').replace('up ', '');
         document.getElementById('dashboard-loading').style.display = 'none';
         document.getElementById('dashboard-grid').style.display = 'grid';
+        _realtimeErrorCount = 0; // Reset error counter on fresh dashboard init
         await updateRealtimeInfo();
         if (realtimeUpdateInterval) clearInterval(realtimeUpdateInterval);
-        // 3s interval (was 2s) — reduces concurrent socket pressure on DaemonServer
+        // 3s interval — reduces concurrent socket pressure on DaemonServer
         realtimeUpdateInterval = setInterval(updateRealtimeInfo, 3000);
     } catch (e) {
         document.getElementById('device-name').textContent = "Unknown Device";
@@ -142,16 +145,20 @@ async function updateRealtimeInfo() {
         document.getElementById('battery-level').textContent = batteryInfo.match(/level: (\d+)/)?.[1] ?? '--';
         document.getElementById('battery-temp').textContent = ((parseInt(batteryInfo.match(/temperature: (\d+)/)?.[1] ?? 0)) / 10).toFixed(1);
         document.getElementById('battery-status-icon').className = batteryInfo.match(/status: 2/)?.[0] ? 'fas fa-bolt text-accentRed' : 'fas fa-battery-three-quarters text-yellow-600';
+        _realtimeErrorCount = 0; // Reset on success
     } catch (e) {
-        // On error, stop the interval to prevent endless error loop
-        if (realtimeUpdateInterval) {
-            clearInterval(realtimeUpdateInterval);
-            realtimeUpdateInterval = null;
+        _realtimeErrorCount++;
+        // Only stop interval after REALTIME_MAX_ERRORS consecutive failures.
+        // A single transient error (timeout, socket blip) should NOT kill monitoring forever.
+        if (_realtimeErrorCount >= REALTIME_MAX_ERRORS) {
+            if (realtimeUpdateInterval) {
+                clearInterval(realtimeUpdateInterval);
+                realtimeUpdateInterval = null;
+            }
         }
     } finally {
         // ALWAYS release the guard, even on error
         isUpdatingRealtime = false;
     }
 }
-
 
