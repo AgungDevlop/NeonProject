@@ -228,7 +228,12 @@ function setupEventListeners() {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
+        let engineConnected = false; // Track connection state
+
         setInterval(async () => {
+            // Stop polling once confirmed connected
+            if (engineConnected) return;
+
             const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
             
             if (alpine && alpine.activeModal === 'shizukuRequired') {
@@ -238,6 +243,7 @@ function setupEventListeners() {
                 try {
                     const isConnected = await window.Android.getShizukuStatus();
                     if (isConnected) {
+                        engineConnected = true; // Stop further polling
                         alpine.activeModal = ''; // Tutup modal secara paksa dari sisi JS
                         alpine.showNotification("Engine Terhubung Otomatis!");
                         
@@ -251,7 +257,7 @@ function setupEventListeners() {
                     isCheckingStatus = false;
                 }
             }
-        }, 2000);
+        }, 3000); // 3s instead of 2s to reduce overhead
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
