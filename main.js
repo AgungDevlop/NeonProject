@@ -249,46 +249,51 @@ function setupEventListeners() {
 
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
-    let isCheckingStatus = false;
+    // NOTE: do NOT declare a local isCheckingStatus here — the module-level one in
+    // checkStatusAndInit already guards concurrent calls to getShizukuStatus().
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
-        let engineConnected = false; // Track connection state
+        let engineConnected = false; // Stop polling once we know we're connected
 
-        setInterval(async () => {
-            // Stop polling once confirmed connected
+        // Store ID so we can clear it if setupEventListeners is called again (prevents duplicate loops)
+        if (window._adbPollInterval) clearInterval(window._adbPollInterval);
+        window._adbPollInterval = setInterval(async () => {
+            // Once connected, never poll again
             if (engineConnected) return;
 
-            const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
-            
-            if (alpine && alpine.activeModal === 'shizukuRequired') {
-                if (isCheckingStatus) return;
-                isCheckingStatus = true;
-                
-                try {
-                    const isConnected = await window.Android.getShizukuStatus();
-                    if (isConnected) {
-                        engineConnected = true; // Stop further polling
-                        alpine.activeModal = ''; // Tutup modal secara paksa dari sisi JS
-                        alpine.showNotification("Engine Terhubung Otomatis!");
-                        
-                        if (typeof initializeAppFeatures === 'function') {
-                            await initializeAppFeatures();
-                        }
+            const alpine = typeof getAlpine === 'function' ? getAlpine() : null;
+            if (!alpine) return;
+
+            // Only poll while the "connect" modal is open
+            if (alpine.activeModal !== 'shizukuRequired') return;
+
+            try {
+                // Use getCachedShizukuStatus to avoid hammering DaemonServer
+                const isConnected = typeof getCachedShizukuStatus === 'function'
+                    ? await getCachedShizukuStatus()
+                    : await window.Android.getShizukuStatus();
+                if (isConnected) {
+                    engineConnected = true;
+                    clearInterval(window._adbPollInterval);
+                    window._adbPollInterval = null;
+                    alpine.activeModal = '';
+                    alpine.showNotification("Engine Terhubung Otomatis!");
+                    if (typeof initializeAppFeatures === 'function') {
+                        await initializeAppFeatures();
                     }
-                } catch (e) {
-                    console.error("Error:", e);
-                } finally {
-                    isCheckingStatus = false;
                 }
+            } catch (e) {
+                // Silently ignore — daemon may still be starting up
             }
-        }, 3000); // 3s instead of 2s to reduce overhead
+        }, 3000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
     }
+
 
 
 

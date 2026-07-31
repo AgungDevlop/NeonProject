@@ -1,26 +1,120 @@
-async function checkShizukuStatus() {
-    try {
-        const status = window.Android?.getShizukuStatus ? await window.Android.getShizukuStatus() : false;
-        document.getElementById("shizuku-status").innerHTML = `<i class="fas ${status ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${status ? '#10b981' : '#ef4444'};"></i><span>Terminal: ${status ? 'Active' : 'Offline'}</span>`;
-        return status;
-    } catch (e) {
-        document.getElementById("shizuku-status").innerHTML = `<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i><span>Terminal: Error</span>`;
-        return false;
-    }
-}
+// ─── Map-based Shell Command Dispatcher ────────────────────────────────────────
+// CRITICAL FIX: Old pattern overwrote window.onShellOutput/runComplete globally,
+// causing any concurrent executeShellCommand() call to steal each other's callbacks
+// → Promise hang for 30s → WebView freeze. Now each command registers its own
+// callbacks keyed by logId inside a Map, fully concurrent-safe.
+const _shellCallbacks = new Map(); // logId → { onOutput, onComplete }
 
+// Called by Java (NeonCoreUIWebInterface) via evaluateJavascript
+window.onShellOutput = function(moduleName, data, logId) {
+    const cb = _shellCallbacks.get(logId);
+    if (cb) {
+        cb.onOutput(moduleName, data, logId);
+        return;
+    }
+    // Fallback: visible command output (non-silent)
+    const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
+    if (!silentOps.includes(moduleName)) {
+        const outEl = document.getElementById("cmd-output");
+        if (outEl) {
+            if (window.currentLogId !== logId) { outEl.innerHTML = ''; window.currentOutput = ''; window.currentLogId = logId; }
+            window.currentOutput = (window.currentOutput || '') + data + "\n";
+            const line = document.createElement('span');
+            line.innerHTML = typeof parseAnsiColors === 'function' ? parseAnsiColors(data) : data;
+            outEl.appendChild(line); outEl.appendChild(document.createTextNode('\n'));
+            outEl.scrollTop = outEl.scrollHeight;
+            window.Android?.saveLog?.(window.currentOutput, logId);
+        }
+    }
+};
+
+window.runComplete = async function(moduleName, success, logId) {
+    const cb = _shellCallbacks.get(logId);
+    if (cb) {
+        _shellCallbacks.delete(logId);
+        cb.onComplete(moduleName, success, logId);
+        return;
+    }
+    // Fallback: handle user-visible commands
+    const alpine = getAlpine();
+    const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
+    if (silentOps.includes(moduleName)) return;
+    const timestamp = new Date().toLocaleString();
+    let command = window.currentCommand || "";
+    commandLogs.push({ command, output: window.currentOutput, timestamp, logId });
+    localStorage.setItem("commandLogs", JSON.stringify(commandLogs));
+    if (typeof renderLogs === 'function') renderLogs();
+
+    if (window.isSilentTweak) {
+        alpine.activeModal = '';
+    } else {
+        alpine.activeModal = 'commandOutput';
+    }
+
+    if (success) {
+        alpine.showNotification(`${moduleName} executed successfully!`);
+        if (moduleName.includes('Boosting')) {
+            try {
+                alpine.showNotification("Gathering final results...");
+                const afterOutput = await executeShellCommand(PERFORMANCE_COMMANDS.getSystemStats, "SilentOp", `stats-after-${generateRandomId()}`);
+                const afterStats = parseSystemStats(afterOutput);
+                displayBoostResults(boostState.before, afterStats);
+            } catch (e) {
+                document.getElementById('boost-results-container').classList.add('hidden');
+                alpine.showNotification("Could not retrieve boost results.");
+            } finally {
+                boostState = {};
+                setTimeout(() => { alpine.activeModal = 'support'; }, 1200);
+            }
+        }
+    } else {
+        alpine.showNotification(`Failed to run ${moduleName}.`);
+    }
+
+    window.currentOutput = "";
+    window.currentLogId = null;
+    window.currentCommand = null;
+    window.isSilentTweak = false;
+};
+
+// ─── executeShellCommand (concurrent-safe) ─────────────────────────────────────
+// Each call registers its resolve/reject in _shellCallbacks under its unique logId.
+// Multiple concurrent calls never interfere with each other.
 function executeShellCommand(command, moduleName, id) {
     return new Promise((resolve, reject) => {
-        if (!window.Android?.executeCommand) { return reject(new Error("Android interface not available.")); }
+        if (!window.Android?.executeCommand) {
+            return reject(new Error("Android interface not available."));
+        }
         let output = "";
-        const originalOnShellOutput = window.onShellOutput; const originalRunComplete = window.runComplete;
-        const timeoutId = setTimeout(() => { cleanup(); reject(new Error(`Command timed out: ${moduleName}`)); }, 30000);
-        const cleanup = () => { clearTimeout(timeoutId); window.onShellOutput = originalOnShellOutput; window.runComplete = originalRunComplete; };
-        window.onShellOutput = (mName, data, logId) => { if (logId === id) { output += data + "\n"; } else if (originalOnShellOutput) { originalOnShellOutput(mName, data, logId); } };
-        window.runComplete = (mName, success, logId) => { if (logId === id) { cleanup(); if (success) { resolve(output.trim()); } else { reject(new Error(`Command failed: ${moduleName}`)); } } else if (originalRunComplete) { originalRunComplete(mName, success, logId); } };
-        try { window.Android.executeCommand(command, moduleName, id); } catch (e) { cleanup(); reject(e); }
+        const timeoutId = setTimeout(() => {
+            _shellCallbacks.delete(id);
+            reject(new Error(`Command timed out: ${moduleName}`));
+        }, 30000);
+
+        _shellCallbacks.set(id, {
+            onOutput: (mName, data, logId) => {
+                output += data + "\n";
+            },
+            onComplete: (mName, success, logId) => {
+                clearTimeout(timeoutId);
+                if (success) {
+                    resolve(output.trim());
+                } else {
+                    reject(new Error(`Command failed: ${moduleName}`));
+                }
+            }
+        });
+
+        try {
+            window.Android.executeCommand(command, moduleName, id);
+        } catch (e) {
+            clearTimeout(timeoutId);
+            _shellCallbacks.delete(id);
+            reject(e);
+        }
     });
 }
+
 
 function runCommandFlow(command, moduleName, metadata = {}) {
     window.isSilentTweak = false; 
@@ -67,17 +161,7 @@ function fireAndForgetCommand(command, moduleName, logId) {
     }
 }
 
-window.onShellOutput = function(moduleName, output, logId) {
-    const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
-    if (!silentOps.includes(moduleName)) {
-        const outEl = document.getElementById("cmd-output");
-        if (window.currentLogId !== logId) { outEl.innerHTML = ''; window.currentOutput = ''; window.currentLogId = logId; }
-        window.currentOutput += output + "\n";
-        const line = document.createElement('span'); line.innerHTML = parseAnsiColors(output);
-        outEl.appendChild(line); outEl.appendChild(document.createTextNode('\n')); outEl.scrollTop = outEl.scrollHeight;
-        window.Android?.saveLog?.(window.currentOutput, logId);
-    }
-};
+
 
 window.downloadComplete = function(moduleName, success) {
     const alpine = getAlpine();
@@ -106,45 +190,4 @@ window.downloadComplete = function(moduleName, success) {
     }
 };
 
-window.runComplete = async function(moduleName, success, logId) {
-    const alpine = getAlpine();
-    const silentOps = ['DeviceInfo', 'SilentOp', 'DnsCheck'];
-    if (silentOps.includes(moduleName)) return;
-    const timestamp = new Date().toLocaleString();
-    let command = window.currentCommand || "";
-    commandLogs.push({ command, output: window.currentOutput, timestamp, logId });
-    localStorage.setItem("commandLogs", JSON.stringify(commandLogs));
-    renderLogs();
-    
-    if (window.isSilentTweak) { 
-        alpine.activeModal = ''; 
-    } else { 
-        alpine.activeModal = 'commandOutput'; 
-    }
-    
-    if (success) {
-        alpine.showNotification(`${moduleName} executed successfully!`);
-        if (moduleName.includes('Boosting')) {
-            try {
-                alpine.showNotification("Gathering final results...");
-                const afterOutput = await executeShellCommand(PERFORMANCE_COMMANDS.getSystemStats, "SilentOp", `stats-after-${generateRandomId()}`);
-                const afterStats = parseSystemStats(afterOutput);
-                displayBoostResults(boostState.before, afterStats);
-            } catch (e) { 
-                document.getElementById('boost-results-container').classList.add('hidden'); 
-                alpine.showNotification("Could not retrieve boost results."); 
-            }
-            finally { 
-                boostState = {}; 
-                setTimeout(() => { alpine.activeModal = 'support'; }, 1200); 
-            }
-        }
-    } else { 
-        alpine.showNotification(`Failed to run ${moduleName}.`); 
-    }
-    
-    window.currentOutput = ""; 
-    window.currentLogId = null; 
-    window.currentCommand = null; 
-    window.isSilentTweak = false;
-};
+

@@ -1,7 +1,12 @@
 let realtimeUpdateInterval = null;
+let isUpdatingRealtime = false; // Guard: prevent concurrent updateRealtimeInfo calls
+let _lastStatusCheck = 0;       // Timestamp of last ADB status check
+let _cachedStatus = false;      // Cached ADB status (only re-validate every 30s)
+const STATUS_CACHE_MS = 30000;  // Re-check ADB status at most every 30 seconds
 const cpuState = { prevIdle: 0, prevTotal: 0 };
 
 async function checkDnsStatus() {
+    if (!window.Android?.executeCommand) return; // Skip if bridge not ready
     try {
         const command = `mode=$(settings get global private_dns_mode); spec=$(settings get global private_dns_specifier); if [[ "$mode" == "hostname" && ("$spec" == *adguard* || "$spec" == *nextdns*) ]]; then echo "ADBLOCK_DNS_DETECTED"; else echo "OK"; fi`;
         const output = await executeShellCommand(command, 'DnsCheck', `dns-check-${generateRandomId()}`);
@@ -9,6 +14,32 @@ async function checkDnsStatus() {
             getAlpine().activeModal = 'dnsWarning';
         }
     } catch (e) {}
+}
+
+// Returns cached ADB status to avoid querying DaemonServer on every update cycle
+async function getCachedShizukuStatus() {
+    const now = Date.now();
+    if (now - _lastStatusCheck < STATUS_CACHE_MS) {
+        return _cachedStatus; // Use cache
+    }
+    _lastStatusCheck = now;
+    try {
+        _cachedStatus = window.Android?.getShizukuStatus ? await window.Android.getShizukuStatus() : false;
+    } catch (e) {
+        _cachedStatus = false;
+    }
+    // Update status indicator
+    const el = document.getElementById("shizuku-status");
+    if (el) {
+        el.innerHTML = `<i class="fas ${_cachedStatus ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${_cachedStatus ? '#10b981' : '#ef4444'};"></i><span>Terminal: ${_cachedStatus ? 'Active' : 'Offline'}</span>`;
+    }
+    return _cachedStatus;
+}
+
+async function checkShizukuStatus() {
+    // Force a fresh check (bypasses cache) — used only for user-triggered actions
+    _lastStatusCheck = 0;
+    return getCachedShizukuStatus();
 }
 
 async function initializeDashboard() {
@@ -54,7 +85,8 @@ async function initializeDashboard() {
         document.getElementById('dashboard-grid').style.display = 'grid';
         await updateRealtimeInfo();
         if (realtimeUpdateInterval) clearInterval(realtimeUpdateInterval);
-        realtimeUpdateInterval = setInterval(updateRealtimeInfo, 2000);
+        // 3s interval (was 2s) — reduces concurrent socket pressure on DaemonServer
+        realtimeUpdateInterval = setInterval(updateRealtimeInfo, 3000);
     } catch (e) {
         document.getElementById('device-name').textContent = "Unknown Device";
         document.getElementById('dashboard-loading').style.display = 'none';
@@ -63,14 +95,23 @@ async function initializeDashboard() {
 }
 
 async function updateRealtimeInfo() {
-    if (!(await checkShizukuStatus())) return;
-    const command = [
-        "cat /proc/meminfo",
-        "head -n 1 /proc/stat",
-        "dumpsys display | grep 'fps='",
-        "dumpsys battery | grep -E 'level|status|temperature'"
-    ].join(" && echo '---NEON_SPLIT---' && ");
+    // CRITICAL: Guard against concurrent calls. If previous update still running, skip.
+    if (isUpdatingRealtime) return;
+    isUpdatingRealtime = true;
     try {
+        // Use cached status — do NOT call getShizukuStatus() on every 3s tick
+        const isConnected = await getCachedShizukuStatus();
+        if (!isConnected) {
+            isUpdatingRealtime = false;
+            return;
+        }
+        const command = [
+            "cat /proc/meminfo",
+            "head -n 1 /proc/stat",
+            "dumpsys display | grep 'fps='",
+            "dumpsys battery | grep -E 'level|status|temperature'"
+        ].join(" && echo '---NEON_SPLIT---' && ");
+
         const output = await executeShellCommand(command, 'DeviceInfo', `realtime-${generateRandomId()}`);
         const parts = output.split('---NEON_SPLIT---\n');
         const memInfo = parts[0] ?? '';
@@ -102,6 +143,15 @@ async function updateRealtimeInfo() {
         document.getElementById('battery-temp').textContent = ((parseInt(batteryInfo.match(/temperature: (\d+)/)?.[1] ?? 0)) / 10).toFixed(1);
         document.getElementById('battery-status-icon').className = batteryInfo.match(/status: 2/)?.[0] ? 'fas fa-bolt text-accentRed' : 'fas fa-battery-three-quarters text-yellow-600';
     } catch (e) {
-        clearInterval(realtimeUpdateInterval);
+        // On error, stop the interval to prevent endless error loop
+        if (realtimeUpdateInterval) {
+            clearInterval(realtimeUpdateInterval);
+            realtimeUpdateInterval = null;
+        }
+    } finally {
+        // ALWAYS release the guard, even on error
+        isUpdatingRealtime = false;
     }
 }
+
+
