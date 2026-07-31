@@ -10,15 +10,23 @@ async function initializeAppFeatures() {
     }
 }
 
+// isCheckingStatus prevents concurrent calls from DOMContentLoaded AND visibilitychange
+let isCheckingStatus = false;
 const checkStatusAndInit = async () => {
-    if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
-        const shizukuOk = await window.Android.getShizukuStatus();
-        if (shizukuOk) {
-            getAlpine().activeModal = '';
-            await initializeAppFeatures();
-        } else {
-            getAlpine().activeModal = 'shizukuRequired';
+    if (isCheckingStatus) return;
+    isCheckingStatus = true;
+    try {
+        if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+            const shizukuOk = await window.Android.getShizukuStatus();
+            if (shizukuOk) {
+                getAlpine().activeModal = '';
+                await initializeAppFeatures();
+            } else {
+                getAlpine().activeModal = 'shizukuRequired';
+            }
         }
+    } finally {
+        isCheckingStatus = false;
     }
 };
 
@@ -49,10 +57,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible') {
+        // Re-check ADB status on app resume.
+        // isCheckingStatus guard in checkStatusAndInit prevents concurrent execution.
         try {
             await checkStatusAndInit();
         } catch (e) {
-            console.error("Error checking status on resume:", e);
+            console.error("Error on resume:", e);
         }
     }
 });
