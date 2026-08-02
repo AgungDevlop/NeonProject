@@ -1,0 +1,43 @@
+name: Restore Repository dari ZIP
+
+on:
+  workflow_dispatch: # Memungkinkan Bli menjalankan skrip ini secara manual dari tab Actions
+
+jobs:
+  unzip-and-restore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Wajib agar bot bisa melakukan commit dan push ke repository
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ekstrak ZIP dan Timpa File
+        run: |
+          # 1. Ekstrak file zip ke folder sementara (temp_extracted)
+          unzip NeonProject-11c9b9d43b9323e7253aea258d7e7b4b25f193b7.zip -d temp_extracted
+          
+          # 2. Pindahkan semua isi dari folder hasil ekstrak ke root directory repository
+          # Catatan: ZIP dari GitHub biasanya memiliki sub-folder di dalamnya
+          rsync -av temp_extracted/NeonProject-11c9b9d43b9323e7253aea258d7e7b4b25f193b7/ ./
+          
+          # 3. Bersihkan jejak dengan menghapus folder sementara dan file ZIP aslinya
+          rm -rf temp_extracted
+          rm NeonProject-11c9b9d43b9323e7253aea258d7e7b4b25f193b7.zip
+
+      - name: Commit dan Push Perubahan
+        run: |
+          # Konfigurasi identitas bot GitHub Actions
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Tambahkan semua file yang sudah diperbaiki
+          git add .
+          
+          # Lakukan commit
+          git commit -m "Auto-restore: Mengembalikan repository ke versi 17 April via ZIP"
+          
+          # Push langsung ke branch utama
+          git push
+          
