@@ -1,105 +1,44 @@
-let isInitializingAppFeatures = false;
 async function initializeAppFeatures() {
-    if (isInitializingAppFeatures) return;
-    isInitializingAppFeatures = true;
-    try {
-        // Force-reset status cache on every feature init so getCachedShizukuStatus()
-        // always does a fresh Java call instead of returning stale 'false'.
-        if (typeof _lastStatusCheck !== 'undefined') _lastStatusCheck = 0;
-        await checkDnsStatus();
-        await initializeDashboard();
-    } finally {
-        isInitializingAppFeatures = false;
-    }
+    await checkDnsStatus(); 
+    await initializeDashboard(); 
 }
 
-/**
- * Called by Java (from NeonCoreUIWebInterface.notifyEngineReady) when DAEMON_READY fires.
- * This is the authoritative "engine is connected" signal from the Java side.
- * Resets status cache and triggers full dashboard initialization.
- */
-window.notifyEngineReady = async function() {
-    // Reset cache — force fresh getShizukuStatus() call on next check
-    if (typeof _lastStatusCheck !== 'undefined') _lastStatusCheck = 0;
-    if (typeof _cachedStatus !== 'undefined') _cachedStatus = false;
-
-    const alpine = typeof getAlpine === 'function' ? getAlpine() : null;
-    if (alpine) {
-        if (alpine.activeModal === 'shizukuRequired' || alpine.activeModal === '') {
-            alpine.activeModal = '';
-            alpine.showNotification('Engine Terhubung!');
-        }
-    }
-    // Stop the ADB polling loop since we're now connected
-    if (window._adbPollInterval) {
-        clearInterval(window._adbPollInterval);
-        window._adbPollInterval = null;
-    }
-    await initializeAppFeatures();
-};
-
-// isCheckingStatus prevents concurrent calls from DOMContentLoaded AND visibilitychange
-let isCheckingStatus = false;
 const checkStatusAndInit = async () => {
-    if (isCheckingStatus) return;
-    isCheckingStatus = true;
-    try {
-        if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
-            const shizukuOk = await window.Android.getShizukuStatus();
-            if (shizukuOk) {
-                const alpine = getAlpine();
-                if (alpine) alpine.activeModal = '';
-                await initializeAppFeatures();
-            } else {
-                const alpine = getAlpine();
-                if (alpine) alpine.activeModal = 'shizukuRequired';
-            }
+    if (window.Android && typeof window.Android.getShizukuStatus === 'function') {
+        const shizukuOk = await window.Android.getShizukuStatus();
+        if (shizukuOk) {
+            getAlpine().activeModal = '';
+            await initializeAppFeatures();
+        } else {
+            getAlpine().activeModal = 'shizukuRequired';
         }
-    } finally {
-        isCheckingStatus = false;
     }
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // NOTE: Do NOT call checkStatusAndInit() here.
-        // ADB init is handled by:
-        //   1. onPageFinished (Java) → tryInit() → initializeAppFeatures()
-        //   2. DAEMON_READY broadcast → notifyEngineReady() → initializeAppFeatures()
-        // Calling checkStatusAndInit() here races with onPageFinished and causes double-init.
+        await checkStatusAndInit();
         await loadLanguages();
-        await loadCommands();
+        await loadCommands(); 
         if (typeof loadTweakSettings === 'function') loadTweakSettings();
-
+        
         await Promise.all([
-            loadFpsModules(),
-            loadFakeDevices(),
+            loadFpsModules(), 
+            loadFakeDevices(), 
             loadGames(),
-            loadPerformanceCommands(),
+            loadPerformanceCommands(), 
             checkForUpdates()
         ]);
-
-        if (typeof renderLogs === 'function') renderLogs();
-        if (typeof renderTweakComponents === 'function') renderTweakComponents();
+        
+        if (typeof renderLogs === 'function') renderLogs(); 
+        if (typeof renderTweakComponents === 'function') renderTweakComponents(); 
         if (typeof initializeNetworkTab === 'function') initializeNetworkTab();
+        if (typeof initializeDiagnosisChart === 'function') initializeDiagnosisChart(); 
         if (typeof initializeBuilder === 'function') initializeBuilder();
-    } catch (error) {
-        const alpine = getAlpine();
-        if (alpine) alpine.showNotification("App failed to initialize properly.");
+    } catch (error) { 
+        getAlpine().showNotification("App failed to initialize properly."); 
     }
     setupEventListeners();
-});
-
-document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState === 'visible') {
-        // Re-check ADB status on app resume.
-        // isCheckingStatus guard in checkStatusAndInit prevents concurrent execution.
-        try {
-            await checkStatusAndInit();
-        } catch (e) {
-            console.error("Error on resume:", e);
-        }
-    }
 });
 
 function setupEventListeners() {
@@ -149,21 +88,19 @@ function setupEventListeners() {
     document.getElementById("apply-updatable-driver-btn")?.addEventListener("click", () => applyPerAppTweak('force_updatable_driver_for_app', getLangString('tweaks_updatable_driver')));
 
     document.getElementById("set-dpi-btn")?.addEventListener("click", () => { 
-        const dpiSlider = document.getElementById("dpi-slider");
-        if (!dpiSlider) return;
-        const dpi = dpiSlider.value; 
-        if (!dpi || dpi < 240 || dpi > 600) { getAlpine().showNotification("DPI out of safe range (240-600)"); return; }
+        const dpiInput = document.getElementById("dpi-input");
+        if (!dpiInput) return;
+        const dpi = dpiInput.value; 
+        if (!dpi) return; 
         if(typeof saveTweakSetting === 'function') saveTweakSetting('dpi', dpi); 
         if(typeof runTweakFlow === 'function') runTweakFlow(COMMANDS.set_dpi.replace('{value}', dpi), getLangString('tweaks_dpi_label')); 
     });
     
     document.getElementById("reset-dpi-btn")?.addEventListener("click", () => { 
         if(typeof saveTweakSetting === 'function') saveTweakSetting('dpi', ''); 
+        const dpiInput = document.getElementById("dpi-input");
+        if (dpiInput) dpiInput.value = ''; 
         if(typeof runTweakFlow === 'function') runTweakFlow(COMMANDS.reset_dpi, getLangString('tweaks_dpi_label')); 
-        const dpiSlider = document.getElementById("dpi-slider");
-        const dpiLabel = document.getElementById("dpi-value-label");
-        if (dpiSlider) { dpiSlider.value = 411; dpiSlider.dispatchEvent(new Event('input')); }
-        if (dpiLabel) dpiLabel.textContent = '411';
     });
 
     const setupUtilityButton = (btnId, commandKey, langKey) => {
@@ -186,55 +123,6 @@ function setupEventListeners() {
     setupUtilityButton('log-cleaner-btn', 'log_cleaner', 'tweaks_log_cleaner');
     setupUtilityButton('fstrim-btn', 'fstrim_command', 'tweaks_fstrim');
     setupUtilityButton('dex-compile-btn', 'force_dex_compile', 'tweaks_dex_compile');
-
-    document.getElementById("apply-pointer-btn")?.addEventListener("click", () => {
-        const slider = document.getElementById("pointer-speed-slider");
-        if (!slider) return;
-        const val = slider.value;
-        if (typeof saveTweakSetting === 'function') saveTweakSetting('pointer_speed', val);
-        if (typeof runTweakFlow === 'function') {
-            const cmd = COMMANDS.pointer_speed_fast.replace(/(pointer_speed) \d/, '$1 ' + val);
-            runTweakFlow(cmd, 'Pointer Speed ' + val);
-        }
-    });
-
-    document.getElementById("profile-gaming-btn")?.addEventListener("click", () => {
-        const cmds = [
-            COMMANDS.power_mode_performance,
-            COMMANDS.animation_speed_fast,
-            COMMANDS.touch_boost_on,
-            COMMANDS.fps_unlocker_on,
-            COMMANDS.force_gpu_rendering,
-            COMMANDS.triple_buffering_enable,
-            COMMANDS.disable_hw_overlays,
-            COMMANDS.game_mode_on,
-            COMMANDS.high_touch_sens_on,
-            COMMANDS.gaming_dnd_on
-        ].filter(Boolean);
-        if (typeof runTweakFlow === 'function') runTweakFlow(cmds.join(' && '), 'Gaming Profile');
-    });
-
-    document.getElementById("profile-balanced-btn")?.addEventListener("click", () => {
-        const cmds = [
-            COMMANDS.animation_speed_fast,
-            COMMANDS.disable_ui_blurs_on,
-            COMMANDS.background_limiter_on,
-            COMMANDS.force_gpu_rendering,
-            COMMANDS.high_touch_sens_on,
-            COMMANDS.scroll_friction_fast
-        ].filter(Boolean);
-        if (typeof runTweakFlow === 'function') runTweakFlow(cmds.join(' && '), 'Balanced Profile');
-    });
-
-    document.getElementById("profile-stock-btn")?.addEventListener("click", async () => {
-        if (await getAlpine().showConfirm("Restore all settings to stock? This resets all tweaks.")) {
-            if (typeof runTweakFlow === 'function' && typeof RESTORE_COMMANDS !== 'undefined') {
-                runTweakFlow(Object.values(RESTORE_COMMANDS).join(' && '), 'Restore Stock');
-            }
-            localStorage.removeItem('tweakSettings');
-            setTimeout(() => location.reload(), 2500);
-        }
-    });
 
     document.getElementById("restore-tweaks-btn")?.addEventListener("click", async () => { 
         if (await getAlpine().showConfirm(getLangString("notification_confirm_restore_tweaks"))) { 
@@ -284,51 +172,40 @@ function setupEventListeners() {
 
     const uiNativeAdb = document.getElementById('ui-native-adb');
     const uiLegacyShizuku = document.getElementById('ui-legacy-shizuku');
-    // NOTE: do NOT declare a local isCheckingStatus here — the module-level one in
-    // checkStatusAndInit already guards concurrent calls to getShizukuStatus().
+    let isCheckingStatus = false;
 
     if (window.Android && typeof window.Android.startAdbPairingFlow === 'function') {
         if (uiNativeAdb) uiNativeAdb.style.display = 'flex';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'none';
 
-        let engineConnected = false; // Stop polling once we know we're connected
-
-        // Store ID so we can clear it if setupEventListeners is called again (prevents duplicate loops)
-        if (window._adbPollInterval) clearInterval(window._adbPollInterval);
-        window._adbPollInterval = setInterval(async () => {
-            // Once connected, never poll again
-            if (engineConnected) return;
-
-            const alpine = typeof getAlpine === 'function' ? getAlpine() : null;
-            if (!alpine) return;
-
-            // Only poll while the "connect" modal is open
-            if (alpine.activeModal !== 'shizukuRequired') return;
-
-            try {
-                // Use getCachedShizukuStatus to avoid hammering DaemonServer
-                const isConnected = typeof getCachedShizukuStatus === 'function'
-                    ? await getCachedShizukuStatus()
-                    : await window.Android.getShizukuStatus();
-                if (isConnected) {
-                    engineConnected = true;
-                    clearInterval(window._adbPollInterval);
-                    window._adbPollInterval = null;
-                    alpine.activeModal = '';
-                    alpine.showNotification("Engine Terhubung Otomatis!");
-                    if (typeof initializeAppFeatures === 'function') {
-                        await initializeAppFeatures();
+        setInterval(async () => {
+            const alpine = typeof getAlpine === 'function' ? getAlpine() : (document.querySelector('[x-data]') ? document.querySelector('[x-data]').__x.$data : null);
+            
+            if (alpine && alpine.activeModal === 'shizukuRequired') {
+                if (isCheckingStatus) return;
+                isCheckingStatus = true;
+                
+                try {
+                    const isConnected = await window.Android.getShizukuStatus();
+                    if (isConnected) {
+                        alpine.activeModal = ''; // Tutup modal secara paksa dari sisi JS
+                        alpine.showNotification("Engine Terhubung Otomatis!");
+                        
+                        if (typeof initializeAppFeatures === 'function') {
+                            await initializeAppFeatures();
+                        }
                     }
+                } catch (e) {
+                    console.error("Error:", e);
+                } finally {
+                    isCheckingStatus = false;
                 }
-            } catch (e) {
-                // Silently ignore — daemon may still be starting up
             }
-        }, 3000);
+        }, 2000);
     } else {
         if (uiNativeAdb) uiNativeAdb.style.display = 'none';
         if (uiLegacyShizuku) uiLegacyShizuku.style.display = 'flex';
     }
-
 
 
 

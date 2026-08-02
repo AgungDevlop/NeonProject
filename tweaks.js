@@ -177,23 +177,24 @@ function renderTweakComponents() {
         { id: 'skiavk', name: 'SkiaVK (Vulkan)', value: 'renderer_skiavk' }
     ], 'renderer');
 
+    createRadioOptions('network-profile-options', [
+        { id: 'default', name: 'Default Profile', value: 'network_default' },
+        { id: 'gaming', name: 'Gaming (Low Latency)', value: 'network_gaming' }
+    ], 'network_profile');
 }
 
 function applyStoredTweaks() {
     Object.keys(tweakSettings).forEach(key => {
         const value = tweakSettings[key];
-        let element = document.querySelector(`[data-tweak="${key}"][value="${value}"]`) || document.querySelector(`[data-tweak="${key}"]`);
-        if (!element) element = document.getElementById(key);
+        const element = document.querySelector(`[data-tweak="${key}"][value="${value}"]`) || document.querySelector(`[data-tweak="${key}"]`);
         if (!element) return;
 
         if (element.type === 'radio') {
-            const radio = document.querySelector(`[data-tweak="${key}"][value="${value}"]`);
-            if (radio) radio.checked = true;
+            element.checked = true;
         } else if (element.type === 'checkbox') {
-            element.checked = !!value;
-        } else if (element.type === 'number' || element.type === 'range') {
+            element.checked = value;
+        } else if (element.type === 'number') {
             element.value = value;
-            element.dispatchEvent(new Event('input'));
         }
     });
 }

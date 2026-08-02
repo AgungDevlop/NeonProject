@@ -1,59 +1,70 @@
 {
-  "categories": [
+  "performance": [
     {
-      "icon": "fas fa-microchip",
-      "title": "CPU & Power",
-      "color": "#ef4444",
+      "title": "Power Governor & CPU",
+      "key": "perf_power_title",
       "items": [
-        { "id": "power-mode-switch", "name": "High Performance Mode", "desc": "Memaksa CPU ke mode performa maksimum. Nonaktifkan adaptive power saver untuk latency minimal.", "tech": "Shizuku/ADB", "cmdOn": "power_mode_performance", "cmdOff": "restore_power_mode", "msgOn": "Enabling Performance Mode", "msgOff": "Restoring Power Mode" },
-        { "id": "doze-mode-switch", "name": "Aggressive Doze", "desc": "Nonaktifkan Doze mode agar app tetap aktif di background tanpa delay. Berguna untuk game online.", "tech": "Shizuku/ADB", "cmdOn": "disable_doze", "cmdOff": "restore_doze", "msgOn": "Disabling Doze Mode", "msgOff": "Restoring Doze Mode" },
-        { "id": "gms-doze-switch", "name": "Force GMS Doze", "desc": "Paksa Google Play Services masuk Doze. Menghemat RAM & CPU dengan membatasi trackers.", "tech": "Shizuku/ADB", "cmdOn": "force_gms_doze", "cmdOff": "restore_gms_doze", "msgOn": "Restricting Google Play Services", "msgOff": "Restoring Play Services" },
-        { "id": "app-freezer-switch", "name": "Suspend Cached Apps", "desc": "Bekukan app yang di-cache agar tidak menghabiskan CPU. Mirip mekanisme Brevent.", "tech": "Shizuku/ADB/Brevent", "cmdOn": "enable_app_freezer", "cmdOff": "restore_app_freezer", "msgOn": "Freezing Background Apps", "msgOff": "Unfreezing Background Apps" },
-        { "id": "thermal-throttle-switch", "name": "Bypass Thermal Limit", "desc": "Lewati batas thermal CPU. Risiko: perangkat bisa panas berlebih dan memperpendek umur baterai jika dipakai terus. Hanya untuk sesi gaming singkat. Reset otomatis saat reboot.", "tech": "Shizuku/ADB", "cmdOn": "thermal_throttle_disable", "cmdOff": "restore_thermal_throttle", "msgOn": "Bypassing Thermal Limit", "msgOff": "Restoring Thermal Limit" },
-        { "id": "touch-boost-switch", "name": "Ultra Touch Boost", "desc": "Turunkan pressure threshold & timeout sentuhan untuk respons lebih cepat di game FPS.", "tech": "Shizuku/ADB", "cmdOn": "touch_boost_on", "cmdOff": "restore_touch_boost", "msgOn": "Enabling Ultra Touch", "msgOff": "Restoring Touch" }
+        { "id": "power-mode-switch", "name": "High Performance Mode", "key": "perf_power_high_perf", "descKey": "perf_power_high_perf_desc", "tweak": "power_mode", "cmdOn": "power_mode_performance", "cmdOff": "restore_power_mode", "msgOn": "Enabling Performance Mode", "msgOff": "Restoring Power Mode" },
+        { "id": "doze-mode-switch", "name": "Aggressive Doze", "key": "perf_power_doze", "descKey": "perf_power_doze_desc", "tweak": "doze_mode", "cmdOn": "disable_doze", "cmdOff": "restore_doze", "msgOn": "Disabling Doze Mode", "msgOff": "Restoring Doze Mode" },
+        { "id": "gms-doze-switch", "name": "Force GMS Doze (Play Services)", "key": "perf_gms_doze", "descKey": "perf_gms_doze_desc", "tweak": "gms_doze", "cmdOn": "force_gms_doze", "cmdOff": "restore_gms_doze", "msgOn": "Restricting Google Play Services", "msgOff": "Restoring Play Services" },
+        { "id": "app-freezer-switch", "name": "Suspend Cached Apps", "key": "perf_app_freezer", "descKey": "perf_app_freezer_desc", "tweak": "app_freezer", "cmdOn": "enable_app_freezer", "cmdOff": "restore_app_freezer", "msgOn": "Freezing Background Apps", "msgOff": "Unfreezing Background Apps" }
       ]
     },
     {
-      "icon": "fas fa-gamepad",
-      "title": "Graphics & GPU",
-      "color": "#a855f7",
+      "title": "Graphics & Rendering Engine",
+      "key": "perf_gpu_title",
       "items": [
-        { "id": "fps-unlocker-switch", "name": "FPS Unlocker", "desc": "Paksa refresh rate layar ke maksimum. Membuka batas FPS di game yang support.", "tech": "Shizuku/ADB", "cmdOn": "fps_unlocker_on", "cmdOff": "restore_fps_unlocker", "msgOn": "Unlocking FPS Limits", "msgOff": "Restoring FPS Limits" },
-        { "id": "vsync-disable-switch", "name": "Disable V-Sync", "desc": "Nonaktifkan Vertical Sync untuk mengurangi input lag. Screen tearing mungkin terjadi.", "tech": "Shizuku/ADB", "cmdOn": "disable_vsync_on", "cmdOff": "restore_vsync", "msgOn": "Disabling V-Sync", "msgOff": "Enabling V-Sync" },
-        { "id": "msaa-force-switch", "name": "Force 4x MSAA", "desc": "Paksa anti-aliasing 4x MSAA di semua app. Tepi objek lebih halus, tapi boros GPU.", "tech": "Shizuku/ADB", "cmdOn": "force_msaa_on", "cmdOff": "restore_msaa", "msgOn": "Forcing 4x MSAA", "msgOff": "Restoring Default AA" },
-        { "id": "gpu-rendering-switch", "name": "Force HW Render", "desc": "Paksa rendering 2D menggunakan GPU (bukan CPU). UI lebih smooth.", "tech": "Shizuku/ADB", "cmdOn": "force_gpu_rendering", "cmdOff": "restore_gpu_rendering", "msgOn": "Forcing GPU Render", "msgOff": "Restoring Render" },
-        { "id": "hw-overlays-switch", "name": "Disable HW Overlays", "desc": "Nonaktifkan hardware overlays. Mengurangi beban GPU dengan memaksa GPU compositing.", "tech": "Shizuku/ADB", "cmdOn": "disable_hw_overlays", "cmdOff": "enable_hw_overlays", "msgOn": "Disabling Overlays", "msgOff": "Enabling Overlays" },
-        { "id": "triple-buffering-switch", "name": "Triple Buffering", "desc": "Enables triple buffering untuk pipeline rendering lebih lancar. Mengurangi stutter.", "tech": "Shizuku/ADB", "cmdOn": "triple_buffering_enable", "cmdOff": "restore_triple_buffering_enable", "msgOn": "Enabling Triple Buffer", "msgOff": "Disabling Triple Buffer" }
+        { "id": "fps-unlocker-switch", "name": "FPS Unlocker Limit", "key": "perf_gpu_max_fps", "descKey": "perf_gpu_max_fps_desc", "tweak": "fps_unlocker", "cmdOn": "fps_unlocker_on", "cmdOff": "restore_fps_unlocker", "msgOn": "Unlocking FPS Limits", "msgOff": "Restoring FPS Limits" },
+        { "id": "vsync-disable-switch", "name": "Disable V-Sync (Low Latency)", "key": "perf_gpu_vsync", "descKey": "perf_gpu_vsync_desc", "tweak": "disable_vsync", "cmdOn": "disable_vsync_on", "cmdOff": "restore_vsync", "msgOn": "Disabling Hardware V-Sync", "msgOff": "Enabling Hardware V-Sync" },
+        { "id": "msaa-force-switch", "name": "Force 4x MSAA (GPU Boost)", "key": "perf_gpu_msaa", "descKey": "perf_gpu_msaa_desc", "tweak": "force_msaa", "cmdOn": "force_msaa_on", "cmdOff": "restore_msaa", "msgOn": "Forcing 4x MSAA Anti-Aliasing", "msgOff": "Restoring Default AA" },
+        { "id": "gpu-rendering-switch", "name": "Force 2D HW Render", "key": "perf_gpu_2d", "descKey": "perf_gpu_2d_desc", "tweak": "gpu_rendering", "cmdOn": "force_gpu_rendering", "cmdOff": "restore_gpu_rendering", "msgOn": "Forcing GPU 2D Render", "msgOff": "Restoring 2D Render" },
+        { "id": "hw-overlays-switch", "name": "Disable HW Overlays", "key": "perf_hw_overlays", "descKey": "perf_hw_overlays_desc", "tweak": "hw_overlays", "cmdOn": "disable_hw_overlays", "cmdOff": "enable_hw_overlays", "msgOn": "Disabling HW Overlays", "msgOff": "Enabling HW Overlays" }
       ]
     },
     {
-      "icon": "fas fa-cog",
-      "title": "System Optimization",
-      "color": "#22c55e",
+      "title": "Core System Parameters",
+      "key": "perf_system_title",
       "items": [
-        { "id": "animation-speed-switch", "name": "Zero Animations", "desc": "Set semua animasi UI ke 0x. Transisi instan tanpa delay.", "tech": "Shizuku/ADB", "cmdOn": "animation_speed_fast", "cmdOff": "restore_animation_speed", "msgOn": "Disabling Animations", "msgOff": "Restoring Animations" },
-        { "id": "disable-ui-blurs-switch", "name": "Disable UI Blurs", "desc": "Nonaktifkan efek blur di system UI. Menghemat GPU.", "tech": "Shizuku/ADB", "cmdOn": "disable_ui_blurs_on", "cmdOff": "restore_ui_blurs", "msgOn": "Disabling UI Blurs", "msgOff": "Restoring UI Blurs" },
-        { "id": "background-limiter-switch", "name": "Process Limiter", "desc": "Batasi proses background & cached processes. Seperti Brevent: mencegah app menyala sendiri.", "tech": "Shizuku/ADB/Brevent", "cmdOn": "background_limiter_on", "cmdOff": "restore_background_limiter", "msgOn": "Limiting Background", "msgOff": "Restoring BG Limit" },
-        { "id": "oem-bloat-switch", "name": "Halt OEM Services", "desc": "Nonaktifkan bloatware gaming OEM (GOS, Joyose, GameAssistant). Sumber lag utama.", "tech": "Shizuku/ADB", "cmdOn": "disable_oem_bloat", "cmdOff": "restore_oem_bloat", "msgOn": "Halting OEM Services", "msgOff": "Restoring OEM Services" },
-        { "id": "sync-disable-switch", "name": "Disable Auto-Sync", "desc": "Matikan auto-sync akun. Menghentikan sinkronisasi background yang boros CPU.", "tech": "Shizuku/ADB", "cmdOn": "disable_auto_sync", "cmdOff": "restore_auto_sync", "msgOn": "Disabling Auto-Sync", "msgOff": "Restoring Auto-Sync" },
-        { "id": "disable-analytics-switch", "name": "Disable Analytics", "desc": "Nonaktifkan telemetry & error reporting OS. Privasi lebih terjaga + hemat resource.", "tech": "Shizuku/ADB", "cmdOn": "disable_analytics_on", "cmdOff": "restore_analytics", "msgOn": "Disabling Analytics", "msgOff": "Restoring Analytics" },
-        { "id": "dalvik-optimize-switch", "name": "Dalvik Fast Mode", "desc": "Set execution mode Dalvik ke fast. AOT compile untuk performa app maksimal.", "tech": "Shizuku/ADB", "cmdOn": "optimize_dalvik", "cmdOff": "restore_dalvik", "msgOn": "Optimizing Dalvik", "msgOff": "Restoring Dalvik" },
-        { "id": "ramdump-disable-switch", "name": "Disable Ramdumps", "desc": "Nonaktifkan OS crash ramdumps. Menghemat I/O & CPU saat sistem crash.", "tech": "Shizuku/ADB", "cmdOn": "disable_ramdump_on", "cmdOff": "restore_ramdump", "msgOn": "Disabling Ramdumps", "msgOff": "Restoring Ramdumps" }
+        { "id": "triple-buffering-switch", "name": "Triple Buffering", "key": "perf_system_triple_buffer", "descKey": "perf_system_triple_buffer_desc", "tweak": "triple_buffering", "cmdOn": "triple_buffering_enable", "cmdOff": "restore_triple_buffering_enable", "msgOn": "Enabling Triple Buffering", "msgOff": "Disabling Triple Buffering" },
+        { "id": "thermal-throttle-switch", "name": "Bypass Thermal Limit", "key": "perf_sys_thermal", "descKey": "perf_sys_thermal_desc", "tweak": "thermal_throttle", "cmdOn": "thermal_throttle_disable", "cmdOff": "restore_thermal_throttle", "msgOn": "Bypassing Thermal Limit", "msgOff": "Restoring Thermal Limit" },
+        { "id": "client-comp-switch", "name": "Disable Client Comp", "key": "perf_sys_comp", "descKey": "perf_sys_comp_desc", "tweak": "client_comp", "cmdOn": "disable_client_comp_cache", "cmdOff": "restore_client_comp_cache", "msgOn": "Disabling Comp Cache", "msgOff": "Restoring Comp Cache" },
+        { "id": "dalvik-optimize-switch", "name": "Dalvik VM Fast Execution", "key": "perf_dalvik", "descKey": "perf_dalvik_desc", "tweak": "dalvik_optimize", "cmdOn": "optimize_dalvik", "cmdOff": "restore_dalvik", "msgOn": "Optimizing Dalvik VM", "msgOff": "Restoring Dalvik VM" },
+        { "id": "ramdump-disable-switch", "name": "Disable OS Crash Ramdump", "key": "perf_sys_ramdump", "descKey": "perf_sys_ramdump_desc", "tweak": "disable_ramdump", "cmdOn": "disable_ramdump_on", "cmdOff": "restore_ramdump", "msgOn": "Disabling OS Ramdumps (CPU Saver)", "msgOff": "Restoring Ramdumps" },
+        { "id": "wellbeing-disable-switch", "name": "Disable Digital Wellbeing", "key": "perf_sys_wellbeing", "descKey": "perf_sys_wellbeing_desc", "tweak": "disable_wellbeing", "cmdOn": "disable_digital_wellbeing", "cmdOff": "restore_digital_wellbeing", "msgOn": "Disabling OS Trackers", "msgOff": "Restoring OS Trackers" }
       ]
     },
     {
-      "icon": "fas fa-sliders-h",
-      "title": "Input & Display",
-      "color": "#f59e0b",
+      "title": "Developer Utilities",
+      "key": "perf_dev_title",
       "items": [
-        { "id": "high-touch-sens-switch", "name": "High Touch Sensitivity", "desc": "Tingkatkan sensitivitas sentuhan untuk respon lebih cepat di game competitive.", "tech": "Shizuku/ADB", "cmdOn": "high_touch_sens_on", "cmdOff": "restore_high_touch_sens", "msgOn": "High Touch On", "msgOff": "High Touch Off" },
-        { "id": "untrusted-touch-switch", "name": "Allow Untrusted Touches", "desc": "Izinkan sentuhan dari overlay. Berguna untuk app game booster/lancher.", "tech": "Shizuku/ADB", "cmdOn": "allow_untrusted_touches", "cmdOff": "restore_untrusted_touches", "msgOn": "Untrusted Touch On", "msgOff": "Untrusted Touch Off" },
-        { "id": "scroll-friction-switch", "name": "Smooth Scroll", "desc": "Kurangi gesekan scroll untuk scrolling super halus dan cepat.", "tech": "Shizuku/ADB", "cmdOn": "scroll_friction_fast", "cmdOff": "restore_scroll_friction", "msgOn": "Smooth Scroll On", "msgOff": "Smooth Scroll Off" },
-        { "id": "game-mode-switch", "name": "Global Game Mode", "desc": "Aktifkan game mode system-wide. Optimasi otomatis untuk semua app game. Efek samping: battery lebih boros.", "tech": "Shizuku/ADB", "cmdOn": "game_mode_on", "cmdOff": "restore_game_mode", "msgOn": "Game Mode On", "msgOff": "Game Mode Off" },
-        { "id": "game-driver-switch", "name": "Force Game Driver", "desc": "Paksa penggunaan game driver (updatable driver) untuk semua app.", "tech": "Shizuku/ADB", "cmdOn": "force_game_driver", "cmdOff": "restore_game_driver", "msgOn": "Game Driver On", "msgOff": "Game Driver Off" },
-        { "id": "gaming-dnd-switch", "name": "Gaming DND", "desc": "Blokir semua notifikasi (heads-up) saat bermain. No distractions.", "tech": "Shizuku/ADB", "cmdOn": "gaming_dnd_on", "cmdOff": "restore_gaming_dnd", "msgOn": "DND On", "msgOff": "DND Off" },
-        { "id": "pointer-speed-switch", "name": "Fast Pointer Speed", "desc": "Set kecepatan pointer ke maks untuk aiming lebih cepat di game.", "tech": "Shizuku/ADB", "cmdOn": "pointer_speed_fast", "cmdOff": "restore_pointer_speed", "msgOn": "Fast Pointer On", "msgOff": "Pointer Default" }
+        { "id": "refresh-rate-switch", "name": "Show Refresh Rate", "key": "perf_dev_refresh", "descKey": "perf_dev_refresh_desc", "tweak": "show_refresh_rate", "cmdOn": "show_refresh_rate_on", "cmdOff": "restore_show_refresh_rate", "msgOn": "Showing Refresh Rate on Screen", "msgOff": "Hiding Refresh Rate" },
+        { "id": "show-touches-switch", "name": "Show Touches", "key": "perf_dev_touches", "descKey": "perf_dev_touches_desc", "tweak": "show_touches", "cmdOn": "show_touches_on", "cmdOff": "restore_show_touches", "msgOn": "Showing Screen Touches", "msgOff": "Hiding Screen Touches" },
+        { "id": "bg-dexopt-switch", "name": "Trigger Core DexOpt Job", "key": "perf_dev_dexopt", "descKey": "perf_dev_dexopt_desc", "tweak": "bg_dexopt", "cmdOn": "bg_dexopt_job", "cmdOff": "restore_bg_dexopt_job", "msgOn": "Forcing System-Wide Dex Compilation", "msgOff": "Canceling Dex Compilation" },
+        { "id": "force-resizable-switch", "name": "Force Resizable Apps", "key": "perf_dev_resizable", "descKey": "perf_dev_resizable_desc", "tweak": "force_resizable", "cmdOn": "force_resizable_on", "cmdOff": "restore_force_resizable", "msgOn": "Forcing Multi-window Support", "msgOff": "Restoring Default Window Behavior" }
       ]
     }
+  ],
+  "global_tweaks": [
+    { "id": "game-mode-switch", "name": "Global Game Mode", "tweak": "game_mode", "key": "tweaks_gamemode_title", "cmdOn": "game_mode_on", "cmdOff": "restore_game_mode", "msgOn": "Enabling Game Mode", "msgOff": "Disabling Game Mode" },
+    { "id": "game-driver-switch", "name": "Force Game Driver", "tweak": "game_driver", "key": "tweaks_game_driver", "cmdOn": "force_game_driver", "cmdOff": "restore_game_driver", "msgOn": "Forcing Game Driver Globally", "msgOff": "Restoring System Driver" },
+    { "id": "gaming-dnd-switch", "name": "Gaming DND (Block Pop-ups)", "tweak": "gaming_dnd", "key": "tweaks_gaming_dnd", "cmdOn": "gaming_dnd_on", "cmdOff": "restore_gaming_dnd", "msgOn": "Blocking Pop-up Banners", "msgOff": "Restoring Notifications" },
+    { "id": "animation-speed-switch", "name": "Instant UI Animations", "tweak": "animation_speed", "key": "tweaks_ui_anim", "cmdOn": "animation_speed_fast", "cmdOff": "restore_animation_speed", "msgOn": "Applying Zero-Latency Animations", "msgOff": "Restoring Animations" },
+    { "id": "disable-ui-blurs-switch", "name": "Disable UI Window Blurs", "tweak": "disable_ui_blurs", "key": "tweaks_disable_ui_blurs", "cmdOn": "disable_ui_blurs_on", "cmdOff": "restore_ui_blurs", "msgOn": "Disabling UI Blurs", "msgOff": "Restoring UI Blurs" },
+    { "id": "scroll-friction-switch", "name": "Smooth Scroll Friction", "tweak": "scroll_friction", "key": "tweaks_scroll_friction", "cmdOn": "scroll_friction_fast", "cmdOff": "restore_scroll_friction", "msgOn": "Optimizing Display Scroll Velocity", "msgOff": "Restoring Scroll Friction" },
+    { "id": "high-touch-sens-switch", "name": "High Touch Sensitivity", "tweak": "high_touch_sens", "key": "tweaks_high_touch_sens", "cmdOn": "high_touch_sens_on", "cmdOff": "restore_high_touch_sens", "msgOn": "Enabling High Touch Sensitivity", "msgOff": "Restoring Touch Sensitivity" },
+    { "id": "touch-boost-switch", "name": "Ultra Touch Boost", "tweak": "touch_boost", "key": "tweaks_ui_touch", "cmdOn": "touch_boost_on", "cmdOff": "restore_touch_boost", "msgOn": "Enabling Ultra Touch", "msgOff": "Restoring Touch" },
+    { "id": "untrusted-touch-switch", "name": "Allow Untrusted Touches", "tweak": "untrusted_touch", "key": "tweaks_untrusted_touch", "cmdOn": "allow_untrusted_touches", "cmdOff": "restore_untrusted_touches", "msgOn": "Allowing Overlay Touches", "msgOff": "Restoring Touch Security" },
+    { "id": "background-limiter-switch", "name": "Aggressive Process Limiter", "tweak": "background_limiter", "key": "tweaks_process_limit", "cmdOn": "background_limiter_on", "cmdOff": "restore_background_limiter", "msgOn": "Limiting Background Processes", "msgOff": "Restoring BG Limit" },
+    { "id": "sync-disable-switch", "name": "Disable Auto-Sync", "tweak": "auto_sync", "key": "tweaks_auto_sync", "cmdOn": "disable_auto_sync", "cmdOff": "restore_auto_sync", "msgOn": "Disabling Auto-Sync to stop lag spikes", "msgOff": "Restoring Auto-Sync" },
+    { "id": "boot-optimizer-switch", "name": "Boot Optimizer", "tweak": "boot_optimizer", "key": "tweaks_process_boot_sound", "cmdOn": "boot_optimizer_on", "cmdOff": "restore_boot_optimizer", "msgOn": "Disabling Boot Sound", "msgOff": "Enabling Boot Sound" },
+    { "id": "vibration-switch", "name": "Disable Haptic Engine", "tweak": "vibration_control", "key": "tweaks_process_haptic", "cmdOn": "vibration_control_off", "cmdOff": "restore_vibration_control", "msgOn": "Disabling Haptics", "msgOff": "Enabling Haptics" },
+    { "id": "audio-warning-switch", "name": "Bypass Audio Warning", "tweak": "audio_warning", "key": "tweaks_audio_warning", "cmdOn": "bypass_audio_warning", "cmdOff": "restore_audio_warning", "msgOn": "Bypassing Audio Limit Warning", "msgOff": "Restoring Audio Warning" },
+    { "id": "print-disable-switch", "name": "Disable Print Services", "tweak": "print_service", "key": "tweaks_print_service", "cmdOn": "disable_print_service", "cmdOff": "restore_print_service", "msgOn": "Disabling Background Print Services", "msgOff": "Restoring Print Services" },
+    { "id": "afk-screen-switch", "name": "AFK Mode (Screen Always On)", "tweak": "afk_screen", "key": "tweaks_afk_screen", "cmdOn": "afk_screen_on", "cmdOff": "restore_afk_screen", "msgOn": "Enabling Infinite Screen Timeout", "msgOff": "Restoring Screen Timeout" },
+    { "id": "max-net-switch", "name": "TCP BBR & Fast Open", "tweak": "max_net", "key": "tweaks_max_net", "cmdOn": "force_max_net", "cmdOff": "restore_max_net", "msgOn": "Optimizing TCP Stack", "msgOff": "Restoring TCP Stack" },
+    { "id": "net-scoring-switch", "name": "Disable Network Scoring", "tweak": "net_scoring", "key": "tweaks_net_scoring", "cmdOn": "disable_net_scoring", "cmdOff": "restore_net_scoring", "msgOn": "Disabling Network Evaluation", "msgOff": "Restoring Network Evaluation" },
+    { "id": "ble-scan-switch", "name": "Disable BLE/GPS Scanning", "tweak": "ble_scan", "key": "tweaks_ble_scan", "cmdOn": "disable_ble_scan", "cmdOff": "restore_ble_scan", "msgOn": "Disabling BLE Background Scan", "msgOff": "Restoring BLE Scan" },
+    { "id": "oem-bloat-switch", "name": "Halt OEM Game Services", "tweak": "oem_bloat", "key": "tweaks_oem_bloat", "cmdOn": "disable_oem_bloat", "cmdOff": "restore_oem_bloat", "msgOn": "Halting OEM Services", "msgOff": "Restoring OEM Services" },
+    { "id": "disable-analytics-switch", "name": "Disable System Analytics", "tweak": "disable_analytics", "key": "tweaks_disable_analytics", "cmdOn": "disable_analytics_on", "cmdOff": "restore_analytics", "msgOn": "Disabling OS Telemetry", "msgOff": "Restoring OS Telemetry" }
   ]
 }
